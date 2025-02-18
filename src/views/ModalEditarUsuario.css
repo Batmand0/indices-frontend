@@ -1,0 +1,18 @@
+.mantine-Modal-content, .mantine-Modal-header {
+    background-color: #EBEBEB;
+}
+.datos {
+    border: 1px solid #eeeeee;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.mantine-MultiSelect-value {
+    background-color: #FFAA5A;
+    color: white;
+}
+.mantine-MultiSelect-value  button {
+    color: white;
+}

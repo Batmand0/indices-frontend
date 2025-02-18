@@ -1,0 +1,28 @@
+.login {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    flex-wrap: nowrap;
+}
+
+.login > img {
+    flex-grow: 2;
+    max-width: 70vw;
+    height: 100vh;
+}
+
+.login > div {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+form div > label {
+    font-weight: 600;
+}
+
+.logo {
+    width: 8vw;
+    margin: 20px auto;
+}

@@ -1,0 +1,39 @@
+.nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    align-content: space-between;
+}
+
+.toronja > span {
+    color: #FF785A;
+}
+
+
+.naranja > span {
+    color: #FFAA5A;
+}
+
+.menu-movil-icon {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    border: 1px solid #A9A9A9;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-movil-icon > img {
+    max-width: 25px;
+    height: auto;
+}
+
+.menuDiv {
+    width: 55vw;
+    max-width: 600px;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}

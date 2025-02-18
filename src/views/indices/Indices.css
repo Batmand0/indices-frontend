@@ -1,0 +1,21 @@
+.filtros {
+    width: 85%;
+    border-radius: 10px;
+    max-width: 1050px;
+    padding: 15px;
+    padding-top: 0;
+    background-color: #f8f9fa;
+    border: 1px solid #e6e9ec;
+    margin-bottom: 15px;
+}
+
+.filtros > legend {
+    color: black;
+    font-weight: bold;
+    /* background-color: white; */
+    padding: 5px;
+}
+
+.filtros > button {
+    align-items: end;
+}

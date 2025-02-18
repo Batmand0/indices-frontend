@@ -1,0 +1,25 @@
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: space-between;
+    flex-wrap: nowrap;
+    background-color: #191919;
+}
+
+.footer > div {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    padding-right: 20px;
+}
+
+#ayuda {
+    width: 1.5rem;
+    margin-right: 10px;
+}

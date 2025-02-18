@@ -1,0 +1,17 @@
+.col-input {
+    width: 25vw;
+    max-width: 450px;
+    min-width: 400px;
+}
+
+.col-input > input {
+    width: 100%;
+}
+
+.input-group {
+    width: 100%;
+}
+
+.input-group > div {
+    width: 48%;
+}
