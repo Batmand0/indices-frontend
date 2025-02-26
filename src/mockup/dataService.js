@@ -1,4 +1,4 @@
-
+// Este archivo contiene la información de las tablas de indices de rendimiento escolar
 const tablaAlumnos = [
     [" ","", "", "", "SEM 1", "SEM 2", "SEM 3", "SEM 4", "SEM 5", "SEM 6", "SEM 7"],
     ['Nombre', 'No. control', 'Carrera', 'Sexo','2016-1', '2016-2','2017-1', '2017-2', '2018-1', '2018-2', '2019-1'],
@@ -17,6 +17,8 @@ const tablaAlumnos = [
     ['GONZALEZ SANCHEZ JESUS JAVIER', '16490378', 'ING. MECANICA','H','MEC','MEC','BAJA', 'MEC', 'MEC', 'BAJA', 'BAJA'],
     ['ARMAS YATES JORGE FERNANDO', '16490381', 'ING. ENERGIAS RENOVABLES','H','ENR','ENR','ENR', 'BAJA', 'ENR', 'BAJA', 'BAJA'],
 ];
+
+// Indices de rendimiento escolar 
 const tablaPermanencia = [
     ["Indices de rendimiento escolar cohorte generacional",],
     ['Semestre', 'Periodo', 'Inscritos', 'Egresados','Desercion', 'Matricula final','Tasa de retencion'],
@@ -96,18 +98,22 @@ const tablaTitulacion = [
     ['Semestre 15', '2021-2',  2 , 6,6 , 0 ],
 ];
 
+// Función para actualizar el periodo basado en el periodo anterior
 function anioPeriodo(periodoAnterior) {
     if (periodoAnterior[1] === '2') {
+        // Si el segundo elemento del periodo es '2', incrementa el año y cambia el semestre a '1'
         periodoAnterior[0] = String(Number(periodoAnterior[0]) + 1);
         periodoAnterior[1] = '1';
     } else if (periodoAnterior[1] === '1') {
+        // Si el segundo elemento del periodo es '1', cambia el semestre a '2'
         periodoAnterior[1] = String(Number(periodoAnterior[1])+ 1);
     }
     return periodoAnterior;
 }
 
+// Función para generar los datos de índices de permanencia
 function datosIndicesPermanencia(cohorte, numSemestres, carrera) {
-    const tablaCopy = [...tablaPermanencia];
+    const tablaCopy = [...tablaPermanencia]; // Copia de la tabla de permanencia
     const tabla = [];
     let activoInd = 0;
     let desercionInd = 0;
@@ -140,6 +146,7 @@ function datosIndicesPermanencia(cohorte, numSemestres, carrera) {
         }
     }
     numSemestres = Number(numSemestres)+2;
+    // Generar los datos de la tabla de permanencia
     for (let sem = 2; sem < numSemestres; sem++) {
         tabla.push(tablaCopy[sem]);
         if (sem === 2){
@@ -158,8 +165,9 @@ function datosIndicesPermanencia(cohorte, numSemestres, carrera) {
     return tabla;
 };
 
+// Función para generar los datos de índices de egreso
 function datosIndicesEgreso(cohorte, numSemestres, carrera) {
-    const tablaCopyE = [...tablaEgreso];
+    const tablaCopyE = [...tablaEgreso]; // Copia de la tabla de egreso
     const tabla = [];
     let egresoInd = 0;
     let tasaInd = 0;
@@ -196,8 +204,9 @@ function datosIndicesEgreso(cohorte, numSemestres, carrera) {
     return tabla;
 };
 
+// Función para generar los datos de índices de titulación
 function datosIndicesTitulacion(cohorte, numSemestres, carrera) {
-    const tablaCopyE = [...tablaTitulacion];
+    const tablaCopyE = [...tablaTitulacion]; // Copia de la tabla de titulación
     const tabla = [];
     let tituloInd = 0;
     let tasaInd = 0;
@@ -233,8 +242,10 @@ function datosIndicesTitulacion(cohorte, numSemestres, carrera) {
     }
     return tabla;
 };
+
+// Función para generar los datos de índices de deserción
 function datosIndicesDesercion(cohorte, numSemestres, carrera) {
-    const tablaCopy = [...tablaDesercion];
+    const tablaCopy = [...tablaDesercion]; // Copia de la tabla de deserción
     const tabla = [];
     let activoInd = 0;
     let desercionInd = 0;
@@ -259,7 +270,6 @@ function datosIndicesDesercion(cohorte, numSemestres, carrera) {
             case 'Tasa de desercion escolar':
                 tasaInd = c;
                 break;
-
             default: continue;
         }
     }
@@ -282,19 +292,22 @@ function datosIndicesDesercion(cohorte, numSemestres, carrera) {
     return tabla;
 };
 
+// Función para obtener la lista de alumnos
 function datosListaAlumnos(cohorte, numSemestres, carrera){
-    const tablaCopy = [...tablaAlumnos];
+    const tablaCopy = [...tablaAlumnos]; // Copia de la tabla de alumnos
     return tablaCopy;
 }
+
+// Objeto que agrupa todas las funciones de datos
 const dataService = {
     datosIndicesDesercion,
     datosIndicesPermanencia,
     datosIndicesEgreso,
     datosIndicesTitulacion,
     datosListaAlumnos,
-
 };
 
-export default  dataService;
+// Exportar el objeto dataService para su uso en otros módulos
+export default dataService;
 
 
