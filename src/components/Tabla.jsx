@@ -29,7 +29,7 @@ function Tabla ({headers, content, colors, doubleHeader, tripleHeader, select, r
     return(
 
         <ScrollArea w={smallSize ? '45vw': '80vw'} h="50vh" mah={500} maw={smallSize? 800: 1500} type='always' >
-            <Table highlightOnHover withBorder withColumnBorders horizontalSpacing='xs' verticalSpacing='xs' className={colors+" tabla"} id='tabla'>
+            <Table highlightOnHover withBorder withColumnBorders horizontalSpacing='xs' verticalSpacing='xs' position="center" className={colors+" tabla"} id='tabla'>
                 {/* Si la propiedad "doubleHeader" es true, entonces la primer celda del primer renglon
                 tendra una longitud de toda la tabla, si no, entonces solo habra un renglon en donde cada
                 columna es un encabezado */}

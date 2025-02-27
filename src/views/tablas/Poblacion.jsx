@@ -76,30 +76,30 @@ const TablaPoblacion = () => {
         <div style={{
             width: '100vw',
             padding: '3vw',
-        }}>
-            <Header color="toronja" section="Tablas" title="Población" route="/tablas" />
-            <Flex direction="column">
-                <fieldset className='filtros'>
-                    <legend>Filtros</legend>
-                    <Group mt={0} mb={16} color='gris'>
-                        <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
-                        <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
-                        <Dropdown  label="Exportar" color="#FF785A" handleChangeFn={setExportar} data={[
-                            {'value':'Excel','label':'Excel'},
-                            {'value':'PDF','label':'PDF'},
-                        ]} />
-                    </Group>
-                    <Group mt={0} mb={16} >
-                        <Checkbox labelPosition='left' checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
-                        <Checkbox labelPosition='left' checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />
-                    </Group>
-                    <Group style={{ justifyContent: "flex-end" }} >
-                        <Button  disabled={!cohorte || !numSemestres || !exportar || !(examenYConv || trasladoYEquiv)|| data.length === 0} onClick={handlePrint} leftIcon={<Printer />} color='naranja'>Imprimir</Button>
-                        <Button  disabled={(!cohorte || !numSemestres || !(examenYConv || trasladoYEquiv)) && !isLoading} onClick={handleTable} color='negro'>{isLoading ? <Loader size='sm' color='#FFFFFF'/>  : "Filtrar"}</Button>
-                    </Group>
-                </fieldset>
-                <Tabla headers={heading} content={data} colors="tabla-toronja" />
-            </Flex>
+        }}>  
+            <Header align="center" justify="center" color="toronja" section="Tablas" title="Población" route="/tablas" />
+                <Flex align="center" justify="center" direction="column" style={{ width: '100%' }}>
+                    <fieldset className='filtros'>
+                        <legend>Filtros</legend>
+                        <Group position="center" mt={0} mb={16} color='gris'>
+                            <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
+                            <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
+                            <Dropdown  label="Exportar" color="#FF785A" handleChangeFn={setExportar} data={[
+                                {'value':'Excel','label':'Excel'},
+                                {'value':'PDF','label':'PDF'},
+                            ]} />
+                        </Group>
+                        <Group position="center" mt={0} mb={16} >
+                            <Checkbox labelPosition='left' checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
+                            <Checkbox labelPosition='left' checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />
+                        </Group>
+                        <Group position="center" style={{ justifyContent: "flex-end" }} >
+                            <Button  disabled={!cohorte || !numSemestres || !exportar || !(examenYConv || trasladoYEquiv)|| data.length === 0} onClick={handlePrint} leftIcon={<Printer />} color='naranja'>Imprimir</Button>
+                            <Button  disabled={(!cohorte || !numSemestres || !(examenYConv || trasladoYEquiv)) && !isLoading} onClick={handleTable} color='negro'>{isLoading ? <Loader size='sm' color='#FFFFFF'/>  : "Filtrar"}</Button>
+                        </Group>
+                    </fieldset>
+                    <Tabla headers={heading} content={data} colors="tabla-toronja" />
+                </Flex>
         </div>
     );
     };
