@@ -92,10 +92,10 @@ const IndicePermanencia = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Indices" title="Permanencia por cohorte generacional" route="/indices" />
-            <Flex direction="column">
+            <Flex align="center" justify="center" direction="column">
                 <fieldset className='filtros'>
                     <legend>Filtros</legend>
-                    <Group mt={0} mb={16} color='gris'>
+                    <Group position="center" mt={0} mb={16} color='gris'>
                         { carreras.length > 0 ? <Dropdown  label="Programa educativo" color="#FF785A" handleChangeFn={setCarrera} data={carreras} /> : null }
                         <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
                         <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
@@ -104,7 +104,7 @@ const IndicePermanencia = () => {
                             {'value':'PDF','label':'PDF'},
                         ]} />
                     </Group>
-                    <Group mt={0} mb={16} >
+                    <Group position="center" mt={0} mb={16} >
                         <Checkbox labelPosition='left' checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
                         <Checkbox labelPosition='left' checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />
                     </Group>

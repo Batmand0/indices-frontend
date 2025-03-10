@@ -84,10 +84,10 @@ const ReportesEgreso = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Reportes" title="Egreso" route="/reportes" />
-            <Flex direction="column">
+            <Flex align="center" justify="center" direction="column">
                 <fieldset className='filtros'>
                     <legend>Filtros</legend>
-                    <Group mt={0} mb={16} color='gris'>
+                    <Group position="center" mt={0} mb={16} color='gris'>
                         <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
                         <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
                         <Dropdown  label="Exportar" color="#FF785A" handleChangeFn={setExportar} data={[
@@ -95,7 +95,7 @@ const ReportesEgreso = () => {
                             {'value':'PDF','label':'PDF'},
                         ]} />
                     </Group>
-                    <Group mt={0} mb={16} >
+                    <Group position="center" mt={0} mb={16} >
                         <Checkbox labelPosition='left' color='toronja' checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
                         <Checkbox labelPosition='left' color='toronja' checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />
                     </Group>

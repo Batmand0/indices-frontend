@@ -12,7 +12,7 @@ const Footer = () => {
             </Button>
             <div>
                 <CircleLetterC  color="#FFFFFF"/>
-                <Text c="#FFFFFF" fw="bold" >Instituto Tecnológico de Mexicali, 2023</Text>
+                <Text c="#FFFFFF" fw="bold" >Instituto Tecnológico de Mexicali, 2025</Text>
             </div>
         </div>
 
