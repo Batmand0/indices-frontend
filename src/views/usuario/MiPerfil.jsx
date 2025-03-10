@@ -117,7 +117,7 @@ const MiPerfil = () => {
             padding: "2vw"
         }}>
             <Header color="toronja" route="/" section="Usuario" title="Perfil de Usuario" />
-            <Group align="flex-start" mt={20} spacing="xl" >
+            <Group position="center" align="flex-start" mt={20} spacing="xl" >
                 <Flex direction="column" w='350px'>
                     <form onSubmit={form.onSubmit(updateUser)}>
                         <TextInput disabled={!onEdit} id="username" className="user-info" {...form.getInputProps('username')} withAsterisk label="Nombre de usuario"/>

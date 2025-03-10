@@ -67,7 +67,7 @@ const RegistroCarreras = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Registro" title="Carreras" route="/"/>
-            <Group align="flex-start" spacing="3vw">
+            <Group position="center" align="flex-start" spacing="3vw">
                 <Flex direction="column">
                     <form onSubmit={form.onSubmit(crearCarrera)}>
                         <TextInput {...form.getInputProps('nombre')} label="Nombre" withAsterisk/>

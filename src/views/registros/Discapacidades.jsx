@@ -62,7 +62,7 @@ const RegistroDiscapacidades = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Registro" title="Discapacidades" route="/"/>
-            <Group align="flex-start" spacing="3vw">
+            <Group position="center" align="flex-start" spacing="3vw">
                 <Flex direction="column" className="col-input">
                     <form onSubmit={form.onSubmit(crearDiscapacidad)}>
                         <TextInput {...form.getInputProps('nombre')} label="Nombre" withAsterisk/>

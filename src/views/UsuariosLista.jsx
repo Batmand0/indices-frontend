@@ -40,8 +40,8 @@ const UsuariosLista = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Usuarios" title="Lista de usuarios" route="/" />
-            <Flex direction="column">
-                <Group w="50%" mb={15}>
+            <Flex align="center" justify="center" direction="column">
+                <Group position="right" w="85%" mb={15}>
                     <TextInput label="Buscar"  icon={<Search width={20} />} />
                     <Button type="button" onClick={open} disabled={!(filaSelect.length >= 3)} mt={16} leftIcon={<Edit />} >Editar</Button>
                     <Link to='/usuarios/crear'>

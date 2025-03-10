@@ -77,7 +77,7 @@ const RegistroPlanes = () => {
             padding: '3vw',
         }}>
             <Header color="naranja" section="Registro" title="Planes de Estudio" route="/"/>
-            <Group align="flex-start" spacing="3vw">
+            <Group position="center" align="flex-start" spacing="3vw">
                 <Flex direction="column" >
                     <form onSubmit={form.onSubmit(crearPlan)}>
                         <TextInput label="Clave" {...form.getInputProps('clave')} withAsterisk/>
