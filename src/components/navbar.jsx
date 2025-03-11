@@ -117,120 +117,13 @@ const NavBar = () => {
                     }}>
                         <span className={classes.spanMenu}>Inicio</span>
                     </Button>
+                    
                     <Tooltip multiline w={220} withArrow transitionProps={{ duration: 200 }} label="Escribe la matrícula de un estudiante para ver su historial">
                         <TextInput placeholder="BUSCAR" icon={<Search />} value={buscar} onChange={setBuscar} onKeyUp={handleSearch} className={classes.searchBar}  size="xs"/>
                     </Tooltip>
                 </Group>
 
-                <Group>
-                    {/* Menu de tablas */}
-                    <Menu trigger="hover" openDelay={100} closeDelay={400}>
-                        <Menu.Target className={classes.menus}>
-                            <Button color="negro" uppercase={true}>
-                                Tablas
-                                <ChevronDown size={16} strokeWidth={2} color={'white'} />
-                            </Button>
-                        </Menu.Target>
-
-                        <Menu.Dropdown>
-                            <Menu.Item onClick={() => {
-                                navigate('/tablas/poblacion');
-                            }}>POBLACION</Menu.Item>
-                            <Menu.Item onClick={() => {
-                                navigate('/tablas/crecimiento');
-                            }}>CRECIMIENTO</Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-
-                    {/* Menu de indices */}
-                    <Menu trigger="hover" openDelay={100} closeDelay={400}>
-                        <Menu.Target className={classes.menus}>
-                            <Button color="negro">
-                                INDICES
-                                <ChevronDown size={16} strokeWidth={2} color={'white'} />
-                            </Button>
-                        </Menu.Target>
-
-                        <Menu.Dropdown>
-                            <Menu.Item onClick={() => {
-                                navigate('/indices/permanencia');
-                            }}>PERMANENCIA</Menu.Item>
-                            <Menu.Item onClick={() => {
-                                navigate('/indices/egreso');
-                            }}>EGRESO</Menu.Item>
-                            <Menu.Item onClick={() => {
-                                navigate('/indices/titulacion');
-                            }}>TITULACION</Menu.Item>
-                            <Menu.Item onClick={() => {
-                                navigate('/indices/desercion');
-                            }}>DESERCION</Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-
-                    {/* Menu de reportes */}
-                    <Menu trigger="hover" openDelay={100} closeDelay={400}>
-                        <Menu.Target className={classes.menus}>
-                            <Button color="negro">
-                                REPORTES
-                                <ChevronDown size={16} strokeWidth={2} color={'white'} />
-                            </Button>
-                        </Menu.Target>
-
-                        <Menu.Dropdown>
-                            <Menu.Item onClick={() => {
-                                navigate('/reportes/nuevo-ingreso');
-                            }}>NUEVO INGRESO</Menu.Item>
-                            <Menu.Item onClick={() => {
-                                navigate('/reportes/egreso');
-                            }}>EGRESADOS</Menu.Item>
-                            <Menu.Item onClick={() => {
-                                navigate('/reportes/titulacion');
-                            }}>TITULADOS</Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-
-                    {/* Menu de cedulas */}
-                    <Menu trigger="hover" openDelay={100} closeDelay={400}>
-                        <Menu.Target className={classes.menus}>
-                            <Button color="negro">
-                                CEDULAS
-                                <ChevronDown size={16} strokeWidth={2} color={'white'} />
-                            </Button>
-                        </Menu.Target>
-
-                        <Menu.Dropdown>
-                            <Menu.Item onClick={()=>{
-                                navigate('/cedulas/caceca');
-                                }}>CACECA</Menu.Item>
-                            <Menu.Item onClick={()=>{
-                                navigate('/cedulas/cacei');
-                                }}>CACEI</Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-
-                    {/* Menu de alumnos */}
-                    <Menu trigger="hover" openDelay={100} closeDelay={400}>
-                        <Menu.Target className={classes.menus}>
-                            <Button color="negro">
-                                ALUMNOS
-                                <ChevronDown size={16} strokeWidth={2} color={'white'} />
-                            </Button>
-                        </Menu.Target>
-
-                        <Menu.Dropdown>
-                            <Menu.Item onClick={()=>{
-                                navigate('/alumnos/historial');
-                                }}>HISTORIAL POR ALUMNO</Menu.Item>
-                            <Menu.Item onClick={()=>{
-                                navigate('/alumnos/lista');
-                                }}>LISTA DE ALUMNOS</Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-
-                    <Button color="negro" className={classes.menus} onClick={()=>{
-                                navigate('/subir-archivos');
-                                }} >SUBIR ARCHIVOS</Button>
-
+                <Group >
                     {/* Menu de registros */}
                     <Menu trigger="hover" openDelay={100} closeDelay={400}>
                         <Menu.Target className={classes.menus}>
@@ -355,9 +248,12 @@ const NavBar = () => {
                 {/* Menu de usuario */}
                 <Menu trigger="hover" openDelay={100} closeDelay={400}>
                     <Menu.Target>
-                        <ActionIcon variant="filled" color="negro" mr={10}>
-                            <UserCircle />
-                        </ActionIcon>
+                        <Group spacing="xs">
+                            <ActionIcon variant="filled" color="negro">
+                                <UserCircle />
+                            </ActionIcon>
+                            <Text color="white" className={classes.spanMenu} mr={30}>Mi Perfil</Text>
+                        </Group>
                     </Menu.Target>
 
                     { !user().is_superuser ?

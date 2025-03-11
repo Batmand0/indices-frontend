@@ -19,8 +19,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SubirArchivos.css';
 import { notifications } from '@mantine/notifications';
+import { useNavigate } from 'react-router-dom';
 
 const SubirArchivos = () => {
+    const navigate = useNavigate();
     const [opened, handlers] = useDisclosure(false);
     const [isLoading, setIsLoading] = useState(false);
     const [info, setInfo] = useState({'errors':[], 'created':0});
@@ -45,12 +47,12 @@ const SubirArchivos = () => {
 
     return (
         <Container>
-            <ActionIcon color='naranja' variant='filled' radius='lg' mt={16} mb={16}>
+            <ActionIcon color='naranja' variant='filled' radius='lg' mt={16} mb={16} onClick={() => navigate('/')} >
                 <ArrowLeft />
             </ActionIcon>
             <Title order={3}>Subir Archivos</Title>
-            <p>Aqui se suben los tres archivos que utiliza el sistema para trabajar, estos deberan ser cargados una vez por semestre.<br />Los archivos deben de seguir el siguiente formato para ser aceptados en el sistema.</p>
             <Group position='center'>
+                <p>Aqui se suben los archivos que utiliza el sistema para trabajar, estos deberan ser cargados una vez por semestre.<br />Los archivos deben de seguir el siguiente formato para ser aceptados en el sistema.</p>
                 <LoadingOverlay visible={isLoading} />
                 <div>
                     {/* Alumnos inscritos en el semestre */}

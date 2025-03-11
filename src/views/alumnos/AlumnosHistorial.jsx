@@ -140,7 +140,7 @@ const AlumnosHistorial = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Alumnos" title="Historial" route="/alumnos" />
-            <Group align="flex-start" spacing="3vw">
+            <Group position="center" align="flex-start" spacing="3vw">
                 <Flex direction="column">
                     <form id="form-alumno">
                         <Group align='end' mt={10}>
