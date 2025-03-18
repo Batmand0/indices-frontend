@@ -1,4 +1,3 @@
-
 export const buildTablaIndices = (tipo, data, numSemestres) => {
     const tabla = [];
     const tablaIndices =Object.entries(data);
@@ -28,4 +27,45 @@ export const buildTablaIndices = (tipo, data, numSemestres) => {
         }
     }
     return tabla;
+};
+
+/**
+ * Construye la tabla de índices para el modo generacional
+ * @param {string} tipo - Tipo de índice (desercion, permanencia, etc)
+ * @param {Object} data - Datos recibidos del backend
+ * @returns {Array} Tabla formateada para el componente
+ */
+export const buildTablaIndicesGeneracional = (tipo, data) => {
+    const tabla = [];
+    const generaciones = Object.entries(data);
+    
+    for(const [generacion, datos] of generaciones) {
+        const row = [
+            `${generacion.slice(0,4)}-${generacion.slice(4,5)}`,  // Formato YYYY-P
+            datos['total_inicial'],
+            datos['total_actual']
+        ];
+
+        switch(tipo){
+            case 'desercion':
+                row.push(`${datos['tasa_desercion']}%`);
+                break;
+            case 'permanencia':
+                row.push(`${datos['tasa_permanencia']}%`);
+                break;
+            case 'egreso':
+                row.push(`${datos['tasa_egreso']}%`);
+                break;
+            case 'titulacion':
+                row.push(`${datos['tasa_titulacion']}%`);
+                break;
+            default:
+                row.push(`${datos['tasa_desercion']}%`);
+                break;
+        }
+        tabla.push(row);
+    }
+
+    // Ordenar tabla por generación (más reciente primero)
+    return tabla.sort((a, b) => b[0].localeCompare(a[0]));
 };

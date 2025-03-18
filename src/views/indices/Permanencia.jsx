@@ -11,7 +11,7 @@ import { Download, Printer, X } from 'tabler-icons-react';
 import { buildTablaIndices } from 'src/utils/helpers/indicesHelpers';
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
-import { getIndicesData } from 'src/routes/api/controllers/indicesHelpers';
+import { getIndicesData } from 'src/routes/api/controllers/indicesController';
 import { notifications } from '@mantine/notifications';
 
 const IndicePermanencia = () => {

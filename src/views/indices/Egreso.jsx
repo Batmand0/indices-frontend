@@ -9,7 +9,7 @@ import { useInputState } from '@mantine/hooks';
 import { getIndicesHeaders } from 'src/utils/helpers/headerHelpers';
 import { Download, Printer, X } from 'tabler-icons-react';
 import { buildTablaIndices } from 'src/utils/helpers/indicesHelpers';
-import { getIndicesData } from 'src/routes/api/controllers/indicesHelpers';
+import { getIndicesData } from 'src/routes/api/controllers/indicesController';
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { notifications } from '@mantine/notifications';
