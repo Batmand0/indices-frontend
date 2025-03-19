@@ -32,6 +32,7 @@ const IndiceDesercion = () => {
     // Estados para tipos de alumnos a incluir
     const [examenYConv, setExamenYConv] = useState(true); // Alumnos por examen y convalidación
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false); // Alumnos por traslado y equivalencia
+    
     // Nuevo estado para modo generacional
     const [modoGeneracional, setModoGeneracional] = useState(false);
 
