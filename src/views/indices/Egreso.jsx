@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 import { useInputState } from '@mantine/hooks';
 import { getIndicesHeaders } from 'src/utils/helpers/headerHelpers';
 import { Download, Printer, X } from 'tabler-icons-react';
-import { buildTablaIndices } from 'src/utils/helpers/indicesHelpers';
-import { getIndicesData } from 'src/routes/api/controllers/indicesController';
+import { buildTablaIndices, buildTablaIndicesGeneracional } from 'src/utils/helpers/indicesHelpers';
+import { getIndicesData, getIndicesDataGeneracional } from 'src/routes/api/controllers/indicesController';
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { notifications } from '@mantine/notifications';
@@ -27,6 +27,9 @@ const IndiceEgreso = () => {
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
 
+    // Nuevo estado para modo generacional
+    const [modoGeneracional, setModoGeneracional] = useState(false);
+
     const [carreras, setCarreras] = useState([]);
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
@@ -34,37 +37,66 @@ const IndiceEgreso = () => {
         setCarreras(c);
     };
 
+    // Cargar carreras cuando el componente se monta
     useEffect(() => {
+        if (modoGeneracional) {
+            // Limpiar datos cuando se cambia a modo generacional
+            setHeading([[], []]);
+            setData([]);
+        }
         fetchCarreras();
-    }, []);
+    }, [modoGeneracional]);
+
+    // Manejador para generar la tabla con los datos filtrados
     const handleTable = async() => {
         setIsLoading(true);
-        const tabla = await getIndicesData('egreso', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
-        if (tabla.status === 200) {
-            try {
-                const headers = await getIndicesHeaders(4, cohorte, carrera);
-                setHeading(headers);
-                const datos = buildTablaIndices('egreso', tabla.data, numSemestres);
-                setData(datos);
-            } catch (error) {
-                setHeading([[],[]]);
-                setData([]);
-                notifications.show({
-                    message: 'Lo sentimos, hubo un problema al generar la tabla',
-                    color: 'red',
-                    icon: <X />,
+        try {
+            if (modoGeneracional) {
+                // Nueva lógica para modo generacional
+                const tabla = await getIndicesDataGeneracional('egreso', {
+                    examenYConv,
+                    trasladoYEquiv,
+                    cohorteInicial: cohorte,
+                    carrera,
+                    numSemestres
                 });
+        
+                if (tabla.status === 200) {
+                    // Headers para vista generacional
+                    const headers = [
+                        [`Egresos a ${numSemestres} semestres por Generación`],
+                        ['Generación', 'Total Inicial', 'Total Actual', 'Tasa de Egreso']
+                    ];
+                    setHeading(headers);
+                    const datos = buildTablaIndicesGeneracional('egreso', tabla.data);
+                    setData(datos);
+                } else {
+                    throw new Error('Error al obtener datos generacionales');
+                }
+            } else {
+                // Lógica existente para modo normal
+                const tabla = await getIndicesData('egreso', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
+                        
+                if (tabla.status === 200) {
+                    const headers = await getIndicesHeaders(2, cohorte, carrera);
+                    setHeading(headers);
+                    const datos = buildTablaIndices('egreso', tabla.data, numSemestres);
+                    setData(datos);
+                } else {
+                    throw new Error('Error al obtener datos normales');
+                }
             }
-        } else {
+        } catch (error) {
             setHeading([[],[]]);
             setData([]);
             notifications.show({
-                message: 'Lo sentimos, hubo un problema al obtener los datos',
+                message: 'Lo sentimos, hubo un problema al generar la tabla',
                 color: 'red',
                 icon: <X />,
-              });
+            });
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     const handlePrint = async() => {
@@ -94,13 +126,18 @@ const IndiceEgreso = () => {
             width: '100vw',
             padding: '3vw',
         }}>
-            <Header color="naranja" section="Indices" title="Egreso por cohorte generacional" route="/indices" />
+            <Header 
+                color="naranja" 
+                section="Indices" 
+                title={`Egreso ${modoGeneracional ? 'Generacional' : 'por cohorte generacional'}`}  
+                route="/indices" 
+            />
             <Flex align="center" justify="center" direction="column">
                 <fieldset className='filtros'>
                     <legend>Filtros</legend>
                     <Group position="center" mt={0} mb={16} color='gris'>
                         { carreras.length > 0 ? <Dropdown  label="Programa educativo" color="#FFAA5A" handleChangeFn={setCarrera} data={carreras} /> : null }
-                        <Dropdown  label="Cohorte generacional" color="#FFAA5A" data={dropDownData.getCohortes()} handleChangeFn={setCohorte} />
+                        <Dropdown  label={modoGeneracional ? "Cohorte inicial" : "Cohorte generacional"} color="#FFAA5A" data={dropDownData.getCohortes()} handleChangeFn={setCohorte} />
                         <Dropdown  label="Cálculo de semestres" color="#FFAA5A" data={dropDownData.numSemestres} handleChangeFn={setNumSemestre} />
                         <Dropdown  label="Exportar" color="#FFAA5A" handleChangeFn={setExportar} data={[
                             {'value':'Excel','label':'Excel'},
@@ -108,6 +145,7 @@ const IndiceEgreso = () => {
                         ]} />
                     </Group>
                     <Group position="center" mt={0} mb={16} >
+                        <Checkbox labelPosition='left' color='naranja'  checked={modoGeneracional} onChange={(event) => setModoGeneracional(event.currentTarget.checked)} label='Modo Generacional' radius='sm' />
                         <Checkbox labelPosition='left' color='naranja'  checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
                         <Checkbox labelPosition='left' color='naranja'  checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />
                     </Group>
