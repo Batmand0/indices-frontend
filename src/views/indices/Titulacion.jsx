@@ -77,7 +77,7 @@ const IndiceTitulacion = () => {
                 const tabla = await getIndicesData('titulacion', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
                         
                 if (tabla.status === 200) {
-                    const headers = await getIndicesHeaders(2, cohorte, carrera);
+                    const headers = await getIndicesHeaders(3, cohorte, carrera);
                     setHeading(headers);
                     const datos = buildTablaIndices('titulacion', tabla.data, numSemestres);
                     setData(datos);

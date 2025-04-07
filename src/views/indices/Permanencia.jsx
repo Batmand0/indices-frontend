@@ -86,7 +86,7 @@ const IndicePermanencia = () => {
                 const tabla = await getIndicesData('permanencia', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
                         
                 if (tabla.status === 200) {
-                    const headers = await getIndicesHeaders(2, cohorte, carrera);
+                    const headers = await getIndicesHeaders(1, cohorte, carrera);
                     setHeading(headers);
                     const datos = buildTablaIndices('permanencia', tabla.data, numSemestres);
                     setData(datos);
