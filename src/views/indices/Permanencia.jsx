@@ -1,9 +1,8 @@
-// Importación de componentes de Mantine UI y componentes personalizados
 import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
-import {  useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
 import "./Indices.css";
@@ -14,53 +13,70 @@ import { getIndicesData, getIndicesDataGeneracional } from 'src/routes/api/contr
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { notifications } from '@mantine/notifications';
+import DataChart from 'src/components/charts/DataChart';
 
 const IndicePermanencia = () => {
-    // Estado para controlar el loading mientras se procesan datos
     const [isLoading, setIsLoading] = useState(false);
-
-    // Estados para la estructura de la tabla
-    const [heading, setHeading] = useState([[],[]]);  // Encabezados de la tabla (doble header)
-    const [data, setData] = useState([]); // Datos/contenido de la tabla
-
-    // Estados para los filtros del formulario
-    const [cohorte, setCohorte] = useInputState(''); // Año y periodo de ingreso
-    const [carrera, setCarrera] = useInputState(''); // Programa educativo seleccionado
-    const [numSemestres, setNumSemestre] = useInputState(0); // Número de semestres a calcular
-    const [exportar, setExportar] = useInputState(''); // Formato de exportación (PDF/Excel)
-    
-    // Estados para tipos de alumnos a incluir en el cálculo
-    const [examenYConv, setExamenYConv] = useState(true); // Alumnos por examen y convalidación
-    const [trasladoYEquiv, setTrasladoYEquiv] = useState(false); // Alumnos por traslado y equivalencia
-    
-    // Nuevo estado para modo generacional
+    const [heading, setHeading] = useState([[],[]]);
+    const [data, setData] = useState([]);
+    const [chartData, setChartData] = useState(null);
+    const [chartType, setChartType] = useState('line');
+    const [cohorte, setCohorte] = useInputState('');
+    const [carrera, setCarrera] = useInputState('');
+    const [numSemestres, setNumSemestre] = useInputState(0);
+    const [exportar, setExportar] = useInputState('');
+    const [examenYConv, setExamenYConv] = useState(true);
+    const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [modoGeneracional, setModoGeneracional] = useState(false);
-
-    // Estado para almacenar la lista de carreras disponibles
     const [carreras, setCarreras] = useState([]);
 
-    // Función para obtener la lista de carreras del backend
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
+        c.push({'value': 'TODAS', 'label': 'TODAS LAS CARRERAS'});
         setCarreras(c);
     };
 
-    // Cargar carreras cuando el componente se monta
     useEffect(() => {
         if (modoGeneracional) {
-            // Limpiar datos cuando se cambia a modo generacional
             setHeading([[], []]);
             setData([]);
+            setChartData(null);
         }
         fetchCarreras();
     }, [modoGeneracional]);
 
-    // Manejador para generar la tabla con los datos filtrados
+    const prepareChartData = (tableData, headers) => {
+        if (modoGeneracional) {
+            return {
+                labels: tableData.map((row) => row[0]), // Generaciones
+                datasets: [
+                    {
+                        label: 'Tasa de Retención',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                        borderColor: 'rgb(53, 162, 235)',
+                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    }
+                ]
+            };
+        } else {
+            return {
+                labels: tableData.map((row) => row[1]), // Periodos
+                datasets: [
+                    {
+                        label: 'Tasa de Retención',
+                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
+                        borderColor: 'rgb(53, 162, 235)',
+                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    }
+                ]
+            };
+        }
+    };
+
     const handleTable = async() => {
         setIsLoading(true);
         try {
             if (modoGeneracional) {
-                // Nueva lógica para modo generacional
                 const tabla = await getIndicesDataGeneracional('permanencia', {
                     examenYConv,
                     trasladoYEquiv,
@@ -70,7 +86,6 @@ const IndicePermanencia = () => {
                 });
         
                 if (tabla.status === 200) {
-                    // Headers para vista generacional
                     const headers = [
                         [`Permanencia a ${numSemestres} semestres por Generación`],
                         ['Generación', 'Total Inicial', 'Total Actual', 'Tasa de Retención']
@@ -78,11 +93,11 @@ const IndicePermanencia = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('permanencia', tabla.data);
                     setData(datos);
+                    setChartData(prepareChartData(datos, headers));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
             } else {
-                // Lógica existente para modo normal
                 const tabla = await getIndicesData('permanencia', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
                         
                 if (tabla.status === 200) {
@@ -90,6 +105,7 @@ const IndicePermanencia = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('permanencia', tabla.data, numSemestres);
                     setData(datos);
+                    setChartData(prepareChartData(datos, headers));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -97,6 +113,7 @@ const IndicePermanencia = () => {
         } catch (error) {
             setHeading([[],[]]);
             setData([]);
+            setChartData(null);
             notifications.show({
                 message: 'Lo sentimos, hubo un problema al generar la tabla',
                 color: 'red',
@@ -107,34 +124,28 @@ const IndicePermanencia = () => {
         }
     };
 
-    // Manejador para exportar la tabla en PDF o Excel
     const handlePrint = async() => {
-        // Determina el tipo de alumno según las casillas seleccionadas
         const tipoAlumno = examenYConv && trasladoYEquiv ? 1 : examenYConv ? 2 : 3;
         try {
-            // Exporta según el formato seleccionado
             if (exportar === 'PDF') {
                 await generatePDF('Permanencia', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera);
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Indice Permanencia', cohorte, numSemestres, tipoAlumno);
             }
-            // Notificación de éxito
             notifications.show({
                 message: 'La descarga de tu documento ha comenzado.',
                 color: 'teal',
                 icon: <Download size={20} />,
-            });
+              });
         } catch (e) {
-            // Manejo de errores en la exportación
             notifications.show({
                 message: 'Lo sentimos, hubo un problema al generar su documento',
                 color: 'red',
                 icon: <X />,
-            });
+                });
         }
     };
 
-    // Renderizado del componente
     return(
         <div style={{
             width: '100vw',
@@ -161,19 +172,24 @@ const IndicePermanencia = () => {
                         <Dropdown  
                             label={modoGeneracional ? "Cohorte inicial" : "Cohorte generacional"} 
                             color="#FF785A" 
-                            handleChangeFn={setCohorte} 
                             data={dropDownData.getCohortes()} 
+                            handleChangeFn={setCohorte} 
                         />
                         <Dropdown  
                             label="Cálculo de semestres" 
                             color="#FF785A" 
-                            handleChangeFn={setNumSemestre} 
                             data={dropDownData.numSemestres} 
+                            handleChangeFn={setNumSemestre} 
                         />
-                        <Dropdown  label="Exportar" color="#FF785A" handleChangeFn={setExportar} data={[
-                            {'value':'Excel','label':'Excel'},
-                            {'value':'PDF','label':'PDF'},
-                        ]} />
+                        <Dropdown  
+                            label="Exportar" 
+                            color="#FF785A" 
+                            handleChangeFn={setExportar} 
+                            data={[
+                                {'value':'Excel','label':'Excel'},
+                                {'value':'PDF','label':'PDF'},
+                            ]} 
+                        />
                     </Group>
                     <Group position="center" mt={0} mb={16} >
                         <Checkbox labelPosition='left' checked={modoGeneracional} onChange={(event) => setModoGeneracional(event.currentTarget.checked)} label='Modo Generacional' radius='sm' />
@@ -185,7 +201,15 @@ const IndicePermanencia = () => {
                         <Button onClick={handleTable} disabled={(!cohorte || !carrera || !numSemestres || !(examenYConv || trasladoYEquiv)) && !isLoading} color='negro'>{isLoading ? <Loader size='sm' color='#FFFFFF'/>  : "Filtrar"}</Button>
                     </Group>
                 </fieldset>
-                <Tabla colors="tabla-toronja" doubleHeader  headers={heading} content={data} />
+                <Tabla doubleHeader colors="tabla-toronja" headers={heading} content={data} />
+                {chartData && (
+                    <DataChart 
+                        data={chartData}
+                        type={chartType}
+                        title={modoGeneracional ? "Análisis de Permanencia por Generación" : "Análisis de Permanencia por Periodo"}
+                        onTypeChange={setChartType}
+                    />
+                )}
             </Flex>
         </div>
     );

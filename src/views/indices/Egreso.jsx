@@ -13,6 +13,8 @@ import { getIndicesData, getIndicesDataGeneracional } from 'src/routes/api/contr
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { notifications } from '@mantine/notifications';
+import DataChart from 'src/components/charts/DataChart';
+
 
 const IndiceEgreso = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -31,10 +33,47 @@ const IndiceEgreso = () => {
     const [modoGeneracional, setModoGeneracional] = useState(false);
 
     const [carreras, setCarreras] = useState([]);
+
+    //Graficas
+    const [chartData, setChartData] = useState(null);
+    const [chartType, setChartType] = useState('line');
+
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
         c.push({'value': 'TODAS', 'label': 'TODAS LAS CARRERAS'});
         setCarreras(c);
+    };
+
+    const prepareChartData = (tableData, headers) => {
+        if (modoGeneracional) {
+            const chartData = {
+                labels: tableData.map((row) => row[0]), // Generaciones
+                datasets: [
+                    {
+                        label: 'Tasa de Egreso',
+                        data: tableData.map((row) => parseFloat(row[1])),
+                        borderColor: 'rgb(53, 162, 235)',
+                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    }
+                ]
+            };
+            console.log('Datos procesados para la gráfica (modo generacional):', chartData);
+            return chartData;
+        } else {
+            const chartData = {
+                labels: tableData.map((row) => row[1]), // Periodos
+                datasets: [
+                    {
+                        label: 'Tasa de Egreso',
+                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
+                        borderColor: 'rgb(53, 162, 235)',
+                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    }
+                ]
+            };
+            console.log('Datos procesados para la gráfica (modo normal):', chartData);
+            return chartData;
+        }
     };
 
     // Cargar carreras cuando el componente se monta
@@ -43,6 +82,7 @@ const IndiceEgreso = () => {
             // Limpiar datos cuando se cambia a modo generacional
             setHeading([[], []]);
             setData([]);
+            setChartData(null);
         }
         fetchCarreras();
     }, [modoGeneracional]);
@@ -70,6 +110,7 @@ const IndiceEgreso = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('egreso', tabla.data);
                     setData(datos);
+                    setChartData(prepareChartData(datos, headers));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
@@ -82,6 +123,7 @@ const IndiceEgreso = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('egreso', tabla.data, numSemestres);
                     setData(datos);
+                    setChartData(prepareChartData(datos, headers));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -155,6 +197,14 @@ const IndiceEgreso = () => {
                     </Group>
                 </fieldset>
                 <Tabla doubleHeader colors="tabla-naranja"  headers={heading} content={data} />
+                {chartData && (
+                    <DataChart 
+                        data={chartData}
+                        type={chartType}
+                        title={modoGeneracional ? "Análisis de Egreso por Generación" : "Análisis de Egreso por Periodo"}
+                        onTypeChange={setChartType}
+                    />
+                )}
             </Flex>
         </div>
     );

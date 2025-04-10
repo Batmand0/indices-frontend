@@ -12,6 +12,8 @@ import { getIndicesData, getIndicesDataGeneracional } from 'src/routes/api/contr
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { notifications } from '@mantine/notifications';
+import DataChart from 'src/components/charts/DataChart';
+
 
 const IndiceDesercion = () => {
     // Estado para controlar el loading mientras se cargan datos
@@ -39,6 +41,10 @@ const IndiceDesercion = () => {
     // Lista de carreras disponibles
     const [carreras, setCarreras] = useState([]);
 
+    //Graficas
+    const [chartData, setChartData] = useState(null);
+    const [chartType, setChartType] = useState('line');
+
     // Función para obtener la lista de carreras del backend
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
@@ -52,9 +58,38 @@ const IndiceDesercion = () => {
             // Limpiar datos cuando se cambia a modo generacional
             setHeading([[], []]);
             setData([]);
+            setChartData(null);
         }
         fetchCarreras();
     }, [modoGeneracional]);
+
+    const prepareChartData = (tableData) => {
+        if (modoGeneracional) {
+            return {
+                labels: tableData.map((row) => row[0]), // Generaciones
+                datasets: [
+                    {
+                        label: 'Tasa de Deserción',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                        borderColor: 'rgb(53, 162, 235)',
+                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    }
+                ]
+            };
+        } else {
+            return {
+                labels: tableData.map((row) => row[1]), // Periodos
+                datasets: [
+                    {
+                        label: 'Tasa de Deserción',
+                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
+                        borderColor: 'rgb(53, 162, 235)',
+                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                    }
+                ]
+            };
+        }
+    };
 
     // Manejador para generar la tabla con los datos filtrados
     const handleTable = async() => {
@@ -79,6 +114,7 @@ const IndiceDesercion = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('desercion', tabla.data);
                     setData(datos);
+                    setChartData(prepareChartData(datos));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
@@ -91,6 +127,7 @@ const IndiceDesercion = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('desercion', tabla.data, numSemestres);
                     setData(datos);
+                    setChartData(prepareChartData(datos));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -187,6 +224,14 @@ const IndiceDesercion = () => {
                     </Group>
                 </fieldset>
                 <Tabla doubleHeader colors="tabla-naranja"  headers={heading} content={data} />
+                {chartData && (
+                    <DataChart 
+                        data={chartData}
+                        type={chartType}
+                        title={modoGeneracional ? "Análisis de Deserción por Generación" : "Análisis de Deserción por Periodo"}
+                        onTypeChange={setChartType}
+                    />
+                )}
             </Flex>
         </div>
     );
