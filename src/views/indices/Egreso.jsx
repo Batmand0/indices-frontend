@@ -108,7 +108,7 @@ const IndiceEgreso = () => {
                         ['Generación', 'Total Inicial', 'Total Actual', 'Tasa de Egreso']
                     ];
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('egreso', tabla.data);
+                    const datos = buildTablaIndicesGeneracional('egreso', tabla.data, numSemestres);
                     setData(datos);
                     setChartData(prepareChartData(datos, headers));
                 } else {

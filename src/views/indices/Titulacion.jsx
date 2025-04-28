@@ -67,7 +67,7 @@ const IndiceTitulacion = () => {
                         ['Generación', 'Total Inicial', 'Total Actual', 'Tasa de Titulación']
                     ];
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('titulacion', tabla.data);
+                    const datos = buildTablaIndicesGeneracional('titulacion', tabla.data, numSemestres);
                     setData(datos);
                 } else {
                     throw new Error('Error al obtener datos generacionales');

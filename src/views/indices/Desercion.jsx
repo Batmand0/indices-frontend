@@ -112,7 +112,7 @@ const IndiceDesercion = () => {
                         ['Generación', 'Total Inicial', 'Total Actual', 'Tasa Deserción']
                     ];
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('desercion', tabla.data);
+                    const datos = buildTablaIndicesGeneracional('desercion', tabla.data, numSemestres);
                     setData(datos);
                     setChartData(prepareChartData(datos));
                 } else {
