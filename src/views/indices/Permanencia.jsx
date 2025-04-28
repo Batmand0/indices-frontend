@@ -88,10 +88,10 @@ const IndicePermanencia = () => {
                 if (tabla.status === 200) {
                     const headers = [
                         [`Permanencia a ${numSemestres} semestres por Generación`],
-                        ['Generación', 'Total Inicial', 'Total Actual', 'Tasa de Retención']
+                        ['Generación', 'Total Inicial', 'Total Final', 'Tasa de Retención']
                     ];
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('permanencia', tabla.data);
+                    const datos = buildTablaIndicesGeneracional('permanencia', tabla.data, numSemestres);
                     setData(datos);
                     setChartData(prepareChartData(datos, headers));
                 } else {
