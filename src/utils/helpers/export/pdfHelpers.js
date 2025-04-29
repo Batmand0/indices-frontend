@@ -1,10 +1,10 @@
-// import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 import { getNombreCarrera } from "../carreraHelpers";
 
-export async function generatePDF(titulo, cohorte, numSemestres, heading, content, multiPagina, examenYConv, tasladoYEquiv, carrera="") {
-    const tipoAlumnos = (examenYConv && tasladoYEquiv) ? 1 : (examenYConv) ? 2 : 3;
+export async function generatePDF(titulo, cohorte, numSemestres, heading, content, multiPagina, examenYConv, trasladoYEquiv, carrera="", chartRef = null) {
+    const tipoAlumnos = (examenYConv && trasladoYEquiv) ? 1 : (examenYConv) ? 2 : 3;
     let filtroAlumnos = "Examen, convalidación, traslado y equivalencia";
     switch (tipoAlumnos){
         case 1:
@@ -118,7 +118,47 @@ export async function generatePDF(titulo, cohorte, numSemestres, heading, conten
             html: '#tabla ',
         });
     }
-    doc.save('reporte.pdf');
+
+    // Si existe una referencia a la gráfica, añadirla después de la tabla
+    if (chartRef && chartRef.current) {
+        try {
+            console.log('Intentando capturar gráfica...');
+            // Aumentar el tiempo de espera si la gráfica es compleja
+            await new Promise((resolve) => setTimeout(resolve, 200));
+            
+            const canvas = await html2canvas(chartRef.current, {
+                scale: 2, // Mejor calidad
+                logging: false, // Para debugging
+                useCORS: true, // Para imágenes externas
+                allowTaint: true, // Permite contenido cross-origin
+                backgroundColor: '#ffffff' // Fondo blanco consistente
+            });
+            
+            const chartImage = canvas.toDataURL('image/png');
+            
+            // Añadir nueva página para la gráfica
+            doc.addPage();
+            
+            // Calcular dimensiones para mantener la proporción
+            const imgWidth = 500;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            // Centrar la imagen en la página
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const x = (pageWidth - imgWidth) / 2;
+            
+            // Añadir título a la página de la gráfica
+            doc.setFontSize(14);
+            doc.text('Visualización Gráfica', pageWidth / 2, 60, { align: 'center' });
+            
+            doc.addImage(chartImage, 'PNG', x, 70, imgWidth, imgHeight);
+            
+        } catch (error) {
+            console.error('Error al añadir gráfica:', error);
+        }
+    }
+
+    doc.save(`Indice_${titulo}_${cohorte}.pdf`);
     return "Good";
 }
 

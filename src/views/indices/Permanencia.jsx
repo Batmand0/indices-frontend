@@ -2,7 +2,7 @@ import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
 import "./Indices.css";
@@ -29,6 +29,7 @@ const IndicePermanencia = () => {
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [modoGeneracional, setModoGeneracional] = useState(false);
     const [carreras, setCarreras] = useState([]);
+    const chartRef = useRef(null);
 
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
@@ -128,7 +129,18 @@ const IndicePermanencia = () => {
         const tipoAlumno = examenYConv && trasladoYEquiv ? 1 : examenYConv ? 2 : 3;
         try {
             if (exportar === 'PDF') {
-                await generatePDF('Permanencia', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera);
+                await generatePDF(
+                    'Permanencia', 
+                    cohorte, 
+                    numSemestres, 
+                    heading, 
+                    data, 
+                    false, 
+                    examenYConv, 
+                    trasladoYEquiv, 
+                    carrera,
+                    chartRef // Pasar la referencia de la gráfica
+                );
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Indice Permanencia', cohorte, numSemestres, tipoAlumno);
             }
@@ -204,6 +216,7 @@ const IndicePermanencia = () => {
                 <Tabla doubleHeader colors="tabla-toronja" headers={heading} content={data} />
                 {chartData && (
                     <DataChart 
+                        ref={chartRef}
                         data={chartData}
                         type={chartType}
                         title={modoGeneracional ? "Análisis de Permanencia por Generación" : "Análisis de Permanencia por Periodo"}

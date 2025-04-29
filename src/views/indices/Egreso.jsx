@@ -1,4 +1,3 @@
-
 import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
@@ -51,27 +50,34 @@ const IndiceEgreso = () => {
                 datasets: [
                     {
                         label: 'Tasa de Egreso',
-                        data: tableData.map((row) => parseFloat(row[1])),
+                        data: tableData.map((row) => parseFloat(row[3])), // Cambiado de [1] a [3]
                         borderColor: 'rgb(53, 162, 235)',
                         backgroundColor: 'rgba(53, 162, 235, 0.5)',
                     }
                 ]
             };
-            console.log('Datos procesados para la gráfica (modo generacional):', chartData);
             return chartData;
         } else {
+            // Añadir log para debug
+            console.log('Datos de tabla:', tableData);
             const chartData = {
                 labels: tableData.map((row) => row[1]), // Periodos
                 datasets: [
                     {
                         label: 'Tasa de Egreso',
-                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
+                        data: tableData.map((row) => {
+                            // Añadir validación
+                            if (!row[6]) {
+                                console.error('Dato inválido:', row);
+                                return 0;
+                            }
+                            return parseFloat(row[6].replace('%', ''));
+                        }),
                         borderColor: 'rgb(53, 162, 235)',
                         backgroundColor: 'rgba(53, 162, 235, 0.5)',
                     }
                 ]
             };
-            console.log('Datos procesados para la gráfica (modo normal):', chartData);
             return chartData;
         }
     };
