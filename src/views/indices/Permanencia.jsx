@@ -54,8 +54,8 @@ const IndicePermanencia = () => {
                     {
                         label: 'Tasa de Retención',
                         data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)'
                     }
                 ]
             };
@@ -66,8 +66,8 @@ const IndicePermanencia = () => {
                     {
                         label: 'Tasa de Retención',
                         data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)'
                     }
                 ]
             };

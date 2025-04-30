@@ -71,8 +71,8 @@ const IndiceDesercion = () => {
                     {
                         label: 'Tasa de Deserción',
                         data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                        borderColor: 'rgb(255, 170, 90)',
+                        backgroundColor: 'rgb(250, 199, 152)'
                     }
                 ]
             };
@@ -83,8 +83,8 @@ const IndiceDesercion = () => {
                     {
                         label: 'Tasa de Deserción',
                         data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                        borderColor: 'rgb(255, 170, 90)',
+                        backgroundColor: 'rgb(250, 199, 152)'
                     }
                 ]
             };

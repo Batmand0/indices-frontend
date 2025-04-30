@@ -51,8 +51,8 @@ const IndiceEgreso = () => {
                     {
                         label: 'Tasa de Egreso',
                         data: tableData.map((row) => parseFloat(row[3])), // Cambiado de [1] a [3]
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                        borderColor: 'rgb(255, 170, 90)',
+                        backgroundColor: 'rgb(250, 199, 152)'
                     }
                 ]
             };
@@ -73,8 +73,8 @@ const IndiceEgreso = () => {
                             }
                             return parseFloat(row[6].replace('%', ''));
                         }),
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+                        borderColor: 'rgb(255, 170, 90)',
+                        backgroundColor: 'rgb(250, 199, 152)'
                     }
                 ]
             };
