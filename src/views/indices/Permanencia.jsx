@@ -215,14 +215,25 @@ const IndicePermanencia = () => {
                 </fieldset>
                 <Tabla doubleHeader colors="tabla-toronja" headers={heading} content={data} />
                 {chartData && (
+                    <div style={{
+                        width: '90%',
+                        height: '600px',
+                        margin: '2rem auto'
+                    }}>
                     <DataChart 
                         ref={chartRef}
                         data={chartData}
                         type={chartType}
                         title={modoGeneracional ? "Análisis de Permanencia por Generación" : "Análisis de Permanencia por Periodo"}
                         onTypeChange={setChartType}
+                        options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            // ...existing options...
+                        }}
                     />
-                )}
+                </div> 
+                )}   
             </Flex>
         </div>
     );

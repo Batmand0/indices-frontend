@@ -5,13 +5,15 @@ import Tabla from "src/components/Tabla";
 import { useInputState } from "@mantine/hooks";
 import dropDownData from "src/mockup/dropDownData";
 import { getTablasHeaders } from "src/utils/helpers/headerHelpers";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Download, Printer, X } from "tabler-icons-react";
 import { buildTable } from "src/utils/helpers/tablasHelpers";
 import { generatePDF } from "src/utils/helpers/export/pdfHelpers";
 import { generateExcel } from "src/utils/helpers/export/excelHelpers";
 import { getTablasPoblacion } from "src/routes/api/controllers/tablasController";
 import { notifications } from "@mantine/notifications";
+import DataChart from 'src/components/charts/DataChart';
+
 
 const TablaPoblacion = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,13 +25,18 @@ const TablaPoblacion = () => {
     const [exportar, setExportar] = useInputState('');
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [chartType, setChartType] = useState('bar'); // bar chart es mejor para comparar poblaciones
+    const chartRef = useRef(null);
+
 
     const handleTable = async() => {
         setIsLoading(true);
-        const tabla =  await getTable();
+        const tabla = await getTable();
         const header = getTablasHeaders(cohorte, numSemestres);
         setHeading(header);
         setData(tabla);
+        setChartData(prepareChartData(tabla, header));
         setIsLoading(false);
     };
 
@@ -55,7 +62,7 @@ const TablaPoblacion = () => {
         const tipoAlumno = (examenYConv && trasladoYEquiv) ? 1 : examenYConv ? 2 : 3;
         try {
             if (exportar === 'PDF') {
-                await generatePDF('Poblacion', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv);
+                await generatePDF('Poblacion', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, "", chartRef);
             } else if (exportar === 'Excel') {
                  await generateExcel(heading, data, 'Poblacion', cohorte, numSemestres, tipoAlumno);
             }
@@ -72,6 +79,49 @@ const TablaPoblacion = () => {
                 });
         }
     };
+
+    const prepareChartData = (tableData, headers) => {
+        // Log para ver la estructura completa de los headers
+        console.log('Headers completos:', headers);
+        
+        // Obtener periodos de los headers (empezando desde el índice 2)
+        const periodos = headers.slice(2);  // Esto tomará desde "2015-1" hasta el final
+        console.log('Periodos extraídos:', periodos);
+        
+        // Crear un mapa de carreras y sus datos
+        const carrerasMap = new Map();
+        
+        // Procesar los datos por carrera
+        tableData.forEach((row) => {
+            const carrera = row[0]; // Primera columna es el nombre de la carrera
+            if (!carrerasMap.has(carrera)) {
+                // Tomamos los datos desde el segundo elemento
+                carrerasMap.set(carrera, row.slice(2).map((val) => parseInt(val) || 0));
+            }
+        });
+
+        // Convertir el mapa a arrays para Chart.js
+        const carreras = Array.from(carrerasMap.keys());
+        const datasets = carreras.map((carrera) => {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+
+            return {
+                label: carrera,
+                data: carrerasMap.get(carrera),
+                backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
+                borderColor: `rgb(${r}, ${g}, ${b})`,
+                borderWidth: 1,
+            };
+        });
+
+        return {
+            labels: periodos,  // Ahora usamos los periodos correctos
+            datasets: datasets
+        };
+    };
+
     return(
         <div style={{
             width: '100vw',
@@ -99,6 +149,27 @@ const TablaPoblacion = () => {
                         </Group>
                     </fieldset>
                     <Tabla headers={heading} content={data} colors="tabla-toronja" />
+
+                    {chartData && (
+                        <div style={{
+                            width: '90%',
+                            height: '600px',
+                            margin: '2rem auto'
+                        }}>
+                            <DataChart 
+                                ref={chartRef}
+                                data={chartData}
+                                type={chartType}
+                                title={`Población Estudiantil por Carrera - Cohorte ${cohorte}`}
+                                onTypeChange={setChartType}
+                                options={{
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    // ...existing options...
+                                }}
+                            />
+                        </div>
+                    )}
                 </Flex>
         </div>
     );

@@ -204,12 +204,18 @@ const IndiceEgreso = () => {
                 </fieldset>
                 <Tabla doubleHeader colors="tabla-naranja"  headers={heading} content={data} />
                 {chartData && (
+                    <div style={{
+                        width: '90%',
+                        height: '600px',
+                        margin: '2rem auto'
+                    }}>
                     <DataChart 
                         data={chartData}
                         type={chartType}
                         title={modoGeneracional ? "Análisis de Egreso por Generación" : "Análisis de Egreso por Periodo"}
                         onTypeChange={setChartType}
                     />
+                </div>
                 )}
             </Flex>
         </div>
