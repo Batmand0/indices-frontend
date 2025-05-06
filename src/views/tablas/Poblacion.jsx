@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Group, Loader } from "@mantine/core";
+import { Button, Checkbox, Flex, Group, Loader, Menu, UnstyledButton, Text } from "@mantine/core";
 import Header from "src/components/header";
 import Dropdown from "src/components/Dropdown";
 import Tabla from "src/components/Tabla";
@@ -6,7 +6,7 @@ import { useInputState } from "@mantine/hooks";
 import dropDownData from "src/mockup/dropDownData";
 import { getTablasHeaders } from "src/utils/helpers/headerHelpers";
 import { useState, useRef } from "react";
-import { Download, Printer, X } from "tabler-icons-react";
+import { Download, Printer, X, Filter } from "tabler-icons-react";
 import { buildTable } from "src/utils/helpers/tablasHelpers";
 import { generatePDF } from "src/utils/helpers/export/pdfHelpers";
 import { generateExcel } from "src/utils/helpers/export/excelHelpers";
@@ -28,6 +28,8 @@ const TablaPoblacion = () => {
     const [chartData, setChartData] = useState(null);
     const [chartType, setChartType] = useState('bar'); // bar chart es mejor para comparar poblaciones
     const chartRef = useRef(null);
+    const [selectedCarreras, setSelectedCarreras] = useState([]);
+    const [availableCarreras, setAvailableCarreras] = useState([]);
 
 
     const handleTable = async() => {
@@ -36,7 +38,7 @@ const TablaPoblacion = () => {
         const header = getTablasHeaders(cohorte, numSemestres);
         setHeading(header);
         setData(tabla);
-        setChartData(prepareChartData(tabla, header));
+        setChartData(prepareChartData(tabla, header, selectedCarreras));
         setIsLoading(false);
     };
 
@@ -80,44 +82,53 @@ const TablaPoblacion = () => {
         }
     };
 
-    const prepareChartData = (tableData, headers) => {
-        // Log para ver la estructura completa de los headers
-        console.log('Headers completos:', headers);
-        
-        // Obtener periodos de los headers (empezando desde el índice 2)
-        const periodos = headers.slice(2);  // Esto tomará desde "2015-1" hasta el final
-        console.log('Periodos extraídos:', periodos);
-        
-        // Crear un mapa de carreras y sus datos
+    const prepareChartData = (tableData, headers, selected) => {
+        const periodos = headers.slice(2);
         const carrerasMap = new Map();
         
-        // Procesar los datos por carrera
+        // Actualizar carreras disponibles solo la primera vez
+        if (availableCarreras.length === 0) {
+            // Paso 1: Toma cada fila y obtiene el nombre de la carrera (primera columna)
+            // Ejemplo: ['ISC', 'IEM', 'II', ...]
+            const carreras = tableData.map((row) => row[0])
+                // Paso 2: Filtra las carreras que no son 'Total'
+                .filter((carrera) => carrera !== 'Total')
+                // Paso 3: Convierte cada nombre en un objeto con value y label
+                // Ejemplo: [{value: 'ISC', label: 'ISC'}, {value: 'IEM', label: 'IEM'}]
+                .map((carrera) => ({ value: carrera, label: carrera }));
+
+            setAvailableCarreras(carreras);// Guarda todas las carreras
+            setSelectedCarreras([]); // Iniciar sin carreras seleccionadas
+        }
+        
+        // Procesar solo las carreras seleccionadas
         tableData.forEach((row) => {
-            const carrera = row[0]; // Primera columna es el nombre de la carrera
-            if (!carrerasMap.has(carrera)) {
-                // Tomamos los datos desde el segundo elemento
+            const carrera = row[0]; // Toma el nombre de la carrera
+            // Si la carrera está seleccionada y no es el total
+            if (selected.includes(carrera) && carrera !== 'Total') {
+                // Guarda los datos numéricos de la carrera
+                // row.slice(2) toma todos los datos después de la segunda columna
                 carrerasMap.set(carrera, row.slice(2).map((val) => parseInt(val) || 0));
             }
         });
 
-        // Convertir el mapa a arrays para Chart.js
-        const carreras = Array.from(carrerasMap.keys());
-        const datasets = carreras.map((carrera) => {
+        // Convertir el mapa a datasets para Chart.js
+        const datasets = Array.from(carrerasMap.entries()).map(([carrera, datos]) => {
             const r = Math.floor(Math.random() * 255);
             const g = Math.floor(Math.random() * 255);
             const b = Math.floor(Math.random() * 255);
 
             return {
                 label: carrera,
-                data: carrerasMap.get(carrera),
+                data: datos,
                 backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
                 borderColor: `rgb(${r}, ${g}, ${b})`,
-                borderWidth: 1,
+                borderWidth: 1
             };
         });
 
         return {
-            labels: periodos,  // Ahora usamos los periodos correctos
+            labels: periodos,
             datasets: datasets
         };
     };
@@ -156,6 +167,51 @@ const TablaPoblacion = () => {
                             height: '600px',
                             margin: '2rem auto'
                         }}>
+                            <Flex align="center" justify="flex-end" mb={20}>
+                                <Menu shadow="md" width={200}>
+                                    <Menu.Target>
+                                        <UnstyledButton 
+                                            sx={(theme) => ({
+                                                padding: '8px 12px',
+                                                borderRadius: theme.radius.sm,
+                                                color: theme.colors.gray[7],
+                                                '&:hover': {
+                                                    backgroundColor: theme.colors.gray[0],
+                                                },
+                                            })}
+                                        >
+                                            <Flex align="center" gap={8}>
+                                                <Filter size={16} />
+                                                <Text size="sm">Filtrar Carreras</Text>
+                                            </Flex>
+                                        </UnstyledButton>
+                                    </Menu.Target>
+
+                                    <Menu.Dropdown>
+                                        {availableCarreras.map((carrera) => (
+                                            <Menu.Item 
+                                                key={carrera.value}
+                                                onClick={() => {
+                                                    // Si la carrera ya está seleccionada
+                                                    const newSelected = selectedCarreras.includes(carrera.value)
+                                                        ? selectedCarreras.filter((c) => c !== carrera.value) // La quita
+                                                        : [...selectedCarreras, carrera.value];              // La agrega
+                                                    // Actualiza el estado de las carreras seleccionadas
+                                                    setSelectedCarreras(newSelected);
+                                                    // Usar el nuevo array directamente
+                                                    setChartData(prepareChartData(data, heading, newSelected));
+                                                }}
+                                            >
+                                                <Flex align="center" gap={8}>
+                                                    {selectedCarreras.includes(carrera.value) ? '✓' : ' '}
+                                                    <Text>{carrera.label}</Text>
+                                                </Flex>
+                                            </Menu.Item>
+                                        ))}
+                                    </Menu.Dropdown>
+                                </Menu>
+                            </Flex>
+                            
                             <DataChart 
                                 ref={chartRef}
                                 data={chartData}
@@ -165,7 +221,33 @@ const TablaPoblacion = () => {
                                 options={{
                                     responsive: true,
                                     maintainAspectRatio: false,
-                                    // ...existing options...
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    return `${context.dataset.label}: ${context.raw} estudiantes`;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Número de Estudiantes'
+                                            }
+                                        },
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: 'Periodo'
+                                            }
+                                        }
+                                    }
                                 }}
                             />
                         </div>
