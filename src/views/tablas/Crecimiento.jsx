@@ -4,7 +4,7 @@ import Dropdown from "src/components/Dropdown";
 import Tabla from "src/components/Tabla";
 import dropDownData from "src/mockup/dropDownData";
 import { useInputState } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getCrecimientoHeaders } from "src/utils/helpers/headerHelpers";
 import { Download, Printer, X } from "tabler-icons-react";
 import { generatePDF } from "src/utils/helpers/export/pdfHelpers";
@@ -12,33 +12,40 @@ import { generateExcel } from "src/utils/helpers/export/excelHelpers";
 import { getTablasCrecimiento } from "src/routes/api/controllers/tablasController";
 import { buildTablaCrecimiento } from "src/utils/helpers/tablasHelpers";
 import { notifications } from "@mantine/notifications";
+import DataChart from 'src/components/charts/DataChart';
 
 
 const TablaCrecimiento = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [heading, setHeading] = useState([]);
     const [data, setData] = useState([]);
+    const [chartData, setChartData] = useState(null);
+    const [chartType, setChartType] = useState('line'); // line chart es mejor para ver crecimiento
+    const chartRef = useRef(null);
 
     const handleTable = async() => {
         setIsLoading(true);
         const header = getCrecimientoHeaders(cohorte, numSemestres);
         const table = await getTablasCrecimiento(examenYConv, trasladoYEquiv, cohorte, numSemestres, carrera);
+        
         if (table.status === 200) {
             const tab = buildTablaCrecimiento(table.data);
             setData(tab);
             setHeading(header);
+            setChartData(prepareChartData(tab, header));
         } else {
             setHeading([]);
             setData([]);
+            setChartData(null);
             notifications.show({
                 message: 'Lo sentimos, hubo un problema al obtener los datos',
                 color: 'red',
                 icon: <X />,
-              });
+            });
         }
         setIsLoading(false);
-
     };
+
     const handlePrint = async() => {
         const tipoAlumno = (examenYConv && trasladoYEquiv) ? 1 : examenYConv ? 2 : 3;
         try {
@@ -78,6 +85,28 @@ const TablaCrecimiento = () => {
         fetchCarreras();
     }, []);
 
+    
+    const prepareChartData = (tableData, headers) => {
+        // Extraer periodos y poblaciones
+        const periodos = tableData.map((row) => row[0]); // Primera columna son los periodos
+        const poblaciones = tableData.map((row) => row[1]); // Segunda columna son las poblaciones
+
+        // Crear un solo dataset ya que es una sola línea de crecimiento
+        const datasets = [{
+            label: 'Población Estudiantil',
+            data: poblaciones,
+            backgroundColor: 'rgba(255, 170, 90, 0.5)', // Color naranja
+            borderColor: 'rgb(255, 170, 90)',
+            borderWidth: 2,
+            tension: 0.3 // Hace la línea un poco más suave
+        }];
+
+        return {
+            labels: periodos,
+            datasets: datasets
+        };
+    };
+
     return(
         <div style={{
             width: '100vw',
@@ -106,6 +135,53 @@ const TablaCrecimiento = () => {
                     </Group>
                 </fieldset>
                 <Tabla headers={heading} content={data} colors="tabla-naranja" />
+                
+                {chartData && (
+                    <div style={{
+                        width: '90%',
+                        height: '600px',
+                        margin: '2rem auto'
+                    }}>
+                        <DataChart 
+                            ref={chartRef}
+                            data={chartData}
+                            type={chartType}
+                            title={`Crecimiento Estudiantil - Cohorte ${cohorte} ${carrera !== 'TODAS' ? `- ${carrera}` : ''}`}
+                            onTypeChange={setChartType}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return `Población: ${context.raw}`;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Población Estudiantil'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Periodo'
+                                        }
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
+                )}
             </Flex>
         </div>
     );
