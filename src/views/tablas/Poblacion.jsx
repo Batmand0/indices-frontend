@@ -30,6 +30,9 @@ const TablaPoblacion = () => {
     const chartRef = useRef(null);
     const [selectedCarreras, setSelectedCarreras] = useState([]);
     const [availableCarreras, setAvailableCarreras] = useState([]);
+    const [originalData, setOriginalData] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
+    const [menuOpened, setMenuOpened] = useState(false);
 
 
     const handleTable = async() => {
@@ -37,8 +40,33 @@ const TablaPoblacion = () => {
         const tabla = await getTable();
         const header = getTablasHeaders(cohorte, numSemestres);
         setHeading(header);
+        setOriginalData(tabla);
         setData(tabla);
-        setChartData(prepareChartData(tabla, header, selectedCarreras));
+        
+        // Obtener todas las carreras disponibles
+        const carreras = tabla
+            .filter((row) => row[0] !== 'Total')
+            .map((row) => ({
+                value: row[0],
+                label: row[0],
+                isTotal: false
+            }));
+        
+        // Agregar opción de Total
+        carreras.push({
+            value: 'Total',
+            label: 'Total',
+            isTotal: true
+        });
+        
+        setAvailableCarreras(carreras);
+        // Seleccionar todas las carreras por defecto
+        const allCarreras = carreras.map((c) => c.value);
+        setSelectedCarreras(allCarreras);
+        
+        // Actualizar la gráfica con todas las carreras
+        setChartData(prepareChartData(tabla, header, allCarreras));
+        setShowFilters(true); // Mostrar los filtros después de cargar los datos
         setIsLoading(false);
     };
 
@@ -115,26 +143,8 @@ const TablaPoblacion = () => {
         const periodos = headers.slice(2);
         const carrerasMap = new Map();
         
-        // Actualizar carreras disponibles solo la primera vez
-        if (availableCarreras.length === 0) {
-            const carreras = tableData
-                .filter((row) => row[0] !== 'Total')
-                .map((row) => ({
-                    value: row[0],
-                    label: row[0],
-                    isTotal: false
-                }));
-            
-            // Agregar opción de Total
-            carreras.push({
-                value: 'Total',
-                label: 'Total',
-                isTotal: true
-            });
-            
-            setAvailableCarreras(carreras);
-            setSelectedCarreras([]); 
-        }
+        // Ya no necesitamos inicializar availableCarreras aquí
+        // porque se hace en handleTable
         
         // Procesar las carreras seleccionadas
         tableData.forEach((row) => {
@@ -176,6 +186,26 @@ const TablaPoblacion = () => {
         };
     };
 
+    const handleCarreraSelection = (carrera) => {
+        // Si la carrera ya está seleccionada
+        const newSelected = selectedCarreras.includes(carrera.value)
+            ? selectedCarreras.filter((c) => c !== carrera.value) // La quita
+            : [...selectedCarreras, carrera.value];              // La agrega
+        
+        setSelectedCarreras(newSelected);
+        
+        // Filtrar los datos de originalData en lugar de data
+        const filteredData = newSelected.length === 0
+            ? originalData // Si no hay selecciones, mostrar todos los datos
+            : originalData.filter((row) => 
+                newSelected.includes(row[0]) || (row[0] === 'Total' && newSelected.includes('Total'))
+            );
+        
+        // Actualizar tanto la tabla como la gráfica
+        setData(filteredData);
+        setChartData(prepareChartData(filteredData, heading, newSelected));
+    };
+
     return(
         <div style={{
             width: '100vw',
@@ -202,6 +232,67 @@ const TablaPoblacion = () => {
                             <Button  disabled={(!cohorte || !numSemestres || !(examenYConv || trasladoYEquiv)) && !isLoading} onClick={handleTable} color='negro'>{isLoading ? <Loader size='sm' color='#FFFFFF'/>  : "Filtrar"}</Button>
                         </Group>
                     </fieldset>
+                    {showFilters && (
+                        <Flex align="end" justify="flex-end" mb={20}>
+                            <Menu 
+                                shadow="md" 
+                                width={200}
+                                opened={menuOpened}
+                                onChange={setMenuOpened}
+                                closeOnItemClick={false} // Evita que el menú se cierre al seleccionar
+                            >
+                                <Menu.Target>
+                                    <UnstyledButton 
+                                        sx={(theme) => ({
+                                            padding: '8px 12px',
+                                            borderRadius: theme.radius.sm,
+                                            color: theme.colors.gray[7],
+                                            '&:hover': {
+                                                backgroundColor: theme.colors.gray[0],
+                                            },
+                                        })}
+                                    >
+                                        <Flex align="center" gap={8}>
+                                            <Filter size={16} />
+                                            <Text size="sm">Filtrar Carreras</Text>
+                                        </Flex>
+                                    </UnstyledButton>
+                                </Menu.Target>
+
+                                <Menu.Dropdown>
+                                    {availableCarreras.map((carrera) => (
+                                        <Menu.Item 
+                                            key={carrera.value}
+                                            onClick={() => handleCarreraSelection(carrera)}
+                                        >
+                                            <Flex align="center" gap={8}>
+                                                {selectedCarreras.includes(carrera.value) ? '✓' : ' '}
+                                                <Text>{carrera.label}</Text>
+                                            </Flex>
+                                        </Menu.Item>
+                                    ))}
+                                </Menu.Dropdown>
+                            </Menu>
+                            <Button 
+                                variant="subtle" 
+                                size="sm"
+                                onClick={() => {
+                                    // Obtener todas las carreras disponibles
+                                    const allCarreras = availableCarreras.map((c) => c.value);
+                                    // Actualizar el estado de carreras seleccionadas
+                                    setSelectedCarreras(allCarreras);
+                                    // Restaurar los datos originales en la tabla
+                                    setData(originalData);
+                                    // Actualizar la gráfica con todas las carreras
+                                    setChartData(prepareChartData(originalData, heading, allCarreras));
+                                }}
+                                mr={10}
+                            >
+                                Limpiar filtros
+                            </Button>
+                        </Flex>
+                    )}
+                    
                     <Tabla headers={heading} content={data} colors="tabla-toronja" />
 
                     {chartData && (
@@ -210,51 +301,6 @@ const TablaPoblacion = () => {
                             height: '600px',
                             margin: '2rem auto'
                         }}>
-                            <Flex align="center" justify="flex-end" mb={20}>
-                                <Menu shadow="md" width={200}>
-                                    <Menu.Target>
-                                        <UnstyledButton 
-                                            sx={(theme) => ({
-                                                padding: '8px 12px',
-                                                borderRadius: theme.radius.sm,
-                                                color: theme.colors.gray[7],
-                                                '&:hover': {
-                                                    backgroundColor: theme.colors.gray[0],
-                                                },
-                                            })}
-                                        >
-                                            <Flex align="center" gap={8}>
-                                                <Filter size={16} />
-                                                <Text size="sm">Filtrar Carreras</Text>
-                                            </Flex>
-                                        </UnstyledButton>
-                                    </Menu.Target>
-
-                                    <Menu.Dropdown>
-                                        {availableCarreras.map((carrera) => (
-                                            <Menu.Item 
-                                                key={carrera.value}
-                                                onClick={() => {
-                                                    // Si la carrera ya está seleccionada
-                                                    const newSelected = selectedCarreras.includes(carrera.value)
-                                                        ? selectedCarreras.filter((c) => c !== carrera.value) // La quita
-                                                        : [...selectedCarreras, carrera.value];              // La agrega
-                                                    // Actualiza el estado de las carreras seleccionadas
-                                                    setSelectedCarreras(newSelected);
-                                                    // Usar el nuevo array directamente
-                                                    setChartData(prepareChartData(data, heading, newSelected));
-                                                }}
-                                            >
-                                                <Flex align="center" gap={8}>
-                                                    {selectedCarreras.includes(carrera.value) ? '✓' : ' '}
-                                                    <Text>{carrera.label}</Text>
-                                                </Flex>
-                                            </Menu.Item>
-                                        ))}
-                                    </Menu.Dropdown>
-                                </Menu>
-                            </Flex>
-                            
                             <DataChart 
                                 ref={chartRef}
                                 data={chartData}
