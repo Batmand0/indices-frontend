@@ -27,28 +27,51 @@ export const getAllCarreras = async() => {
 /*
 * Regresa la tabla de poblacion juntando los datos de las carreras y los datos poblacionales.
 */
-export const buildTable = async(data) => {
-    const datos = Object.values(data);
-    const carreras = await getCarreras();
-    const table = [];
-    carreras.forEach((row, index) => {
-        const fila = [row['nombre'],row['clave']];
-        datos.forEach((periodo) => {
-            let found = false;
-            periodo.forEach((carrera) => {
-                let poblacion = 0;
-                if (carrera['clave'] === row['clave']){
-                    poblacion = carrera['poblacion'];
-                    fila.push(poblacion);
-                    found = true;
-                }
-            });
-            if (!found)
-                fila.push('');
-        });
-        table.push(fila);
+export const buildTable = (data) => {
+    // Normalizar las claves del objeto data
+    const normalizedData = {};
+    Object.keys(data).forEach((periodo) => {
+        const normalizedPeriod = periodo.replace('-', '');
+        normalizedData[normalizedPeriod] = data[periodo];
     });
-    return table;
+
+    // Obtener y ordenar periodos
+    const periodos = Object.keys(normalizedData).sort((a, b) => a.localeCompare(b));
+    
+    console.log('Datos normalizados:', normalizedData);
+    console.log('Periodos ordenados:', periodos);
+    
+    const carrerasMap = new Map();
+    
+    // Inicializar el mapa con todas las carreras
+    periodos.forEach((periodo) => {
+        normalizedData[periodo].carreras.forEach((carrera) => {
+            if (!carrerasMap.has(carrera.nombre)) {
+                carrerasMap.set(carrera.nombre, new Array(periodos.length).fill(0));
+            }
+        });
+    });
+    
+    // También crear entrada para el total
+    carrerasMap.set('Total', new Array(periodos.length).fill(0));
+    
+    // Llenar los datos
+    periodos.forEach((periodo, index) => {
+        // Llenar datos de carreras
+        normalizedData[periodo].carreras.forEach((carrera) => {
+            carrerasMap.get(carrera.nombre)[index] = carrera.poblacion;
+        });
+        
+        // Llenar datos del total
+        carrerasMap.get('Total')[index] = normalizedData[periodo].total.poblacion;
+    });
+
+    // Convertir el mapa a array para la tabla
+    const tableData = Array.from(carrerasMap.entries()).map(([nombre, poblaciones]) => {
+        return [nombre, '', ...poblaciones];
+    });
+    
+    return tableData;
 };
 
 export const buildTablaCrecimiento = (data) => {

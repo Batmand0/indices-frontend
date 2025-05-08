@@ -6,17 +6,19 @@ import API from "src/utils/api";
 * @param {String} cohorte - Indica el periodo en el que inicia la tabla, se denota por el año seguido de un '-' y despues un numero del 1 al 3 correspondiente al periodo (1 es enero-junio, 2 es verano y 3 es agosto-diciembre).
 * @param {Number} numSemestres - Idica el numero de periodos que se incluyen en la tabla.
 */
-export const getTablasPoblacion = async(nuevoIngreso, trasladoEquiv, cohorte, numSemestres) => {
+export const getTablasPoblacion = async(nuevoIngreso, trasladoEquiv, cohorte, semestres) => {
     try {
-        const response =  await API.get('tablas/poblacion', {
-            params: {'nuevo-ingreso':nuevoIngreso, 'traslado-equivalencia':trasladoEquiv, 'cohorte': cohorte.replace('-',''), 'semestres': numSemestres.toString()}
+        const response = await API.get('tablas/poblacion/', {
+            params: {
+                'nuevo-ingreso': nuevoIngreso,
+                'traslado-equivalencia': trasladoEquiv,
+                cohorte,
+                semestres
+            }
         });
         return response;
-    } catch (err) {
-        return {
-            data: null,
-            status: 400,
-        };
+    } catch (error) {
+        return error.response;
     }
 };
 

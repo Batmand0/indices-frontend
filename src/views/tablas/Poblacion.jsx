@@ -42,22 +42,51 @@ const TablaPoblacion = () => {
         setIsLoading(false);
     };
 
+    // Modificar la llamada a la API
     const getTable = async() => {
-        const tabla = await getTablasPoblacion(examenYConv, trasladoYEquiv, cohorte, numSemestres);
-        if (tabla.status === 200) {
-            const table = await buildTable(tabla.data);
-            return table;
-        } else {
+        try {
+            console.log('Solicitando datos con parámetros:', {
+                examenYConv, 
+                trasladoYEquiv, 
+                cohorte, 
+                numSemestres
+            });
+            
+            const tabla = await getTablasPoblacion(
+                examenYConv, 
+                trasladoYEquiv, 
+                cohorte, 
+                numSemestres
+            );
+            
+            console.log('Datos recibidos del backend:', tabla.data);
+            
+            if (tabla?.status === 200) {
+                const table = buildTable(tabla.data);
+                console.log('Tabla construida:', table);
+                return table;
+            } else {
+                console.error('Error en la respuesta:', tabla);
+                setHeading([]);
+                setData([[]]);
+                notifications.show({
+                    message: 'Lo sentimos, hubo un problema al obtener los datos',
+                    color: 'red',
+                    icon: <X />,
+                });
+                return [];
+            }
+        } catch (error) {
+            console.error('Error en getTable:', error);
             setHeading([]);
             setData([[]]);
             notifications.show({
                 message: 'Lo sentimos, hubo un problema al obtener los datos',
                 color: 'red',
                 icon: <X />,
-              });
-              return [];
+            });
+            return [];
         }
-
     };
 
     const handlePrint = async() => {
@@ -88,41 +117,55 @@ const TablaPoblacion = () => {
         
         // Actualizar carreras disponibles solo la primera vez
         if (availableCarreras.length === 0) {
-            // Paso 1: Toma cada fila y obtiene el nombre de la carrera (primera columna)
-            // Ejemplo: ['ISC', 'IEM', 'II', ...]
-            const carreras = tableData.map((row) => row[0])
-                // Paso 2: Filtra las carreras que no son 'Total'
-                .filter((carrera) => carrera !== 'Total')
-                // Paso 3: Convierte cada nombre en un objeto con value y label
-                // Ejemplo: [{value: 'ISC', label: 'ISC'}, {value: 'IEM', label: 'IEM'}]
-                .map((carrera) => ({ value: carrera, label: carrera }));
-
-            setAvailableCarreras(carreras);// Guarda todas las carreras
-            setSelectedCarreras([]); // Iniciar sin carreras seleccionadas
+            const carreras = tableData
+                .filter((row) => row[0] !== 'Total')
+                .map((row) => ({
+                    value: row[0],
+                    label: row[0],
+                    isTotal: false
+                }));
+            
+            // Agregar opción de Total
+            carreras.push({
+                value: 'Total',
+                label: 'Total',
+                isTotal: true
+            });
+            
+            setAvailableCarreras(carreras);
+            setSelectedCarreras([]); 
         }
         
-        // Procesar solo las carreras seleccionadas
+        // Procesar las carreras seleccionadas
         tableData.forEach((row) => {
-            const carrera = row[0]; // Toma el nombre de la carrera
-            // Si la carrera está seleccionada y no es el total
-            if (selected.includes(carrera) && carrera !== 'Total') {
-                // Guarda los datos numéricos de la carrera
-                // row.slice(2) toma todos los datos después de la segunda columna
+            const carrera = row[0];
+            if (selected.includes(carrera)) {
                 carrerasMap.set(carrera, row.slice(2).map((val) => parseInt(val) || 0));
             }
         });
 
-        // Convertir el mapa a datasets para Chart.js
+        // Convertir el mapa a datasets
         const datasets = Array.from(carrerasMap.entries()).map(([carrera, datos]) => {
-            const r = Math.floor(Math.random() * 255);
-            const g = Math.floor(Math.random() * 255);
-            const b = Math.floor(Math.random() * 255);
+            let color;
+            if (carrera === 'Total') {
+                color = {
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    borderColor: 'rgb(0, 0, 0)'
+                };
+            } else {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                color = {
+                    backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
+                    borderColor: `rgb(${r}, ${g}, ${b})`
+                };
+            }
 
             return {
                 label: carrera,
                 data: datos,
-                backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
-                borderColor: `rgb(${r}, ${g}, ${b})`,
+                ...color,
                 borderWidth: 1
             };
         });
