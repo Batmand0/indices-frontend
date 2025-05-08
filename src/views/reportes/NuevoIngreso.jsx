@@ -13,6 +13,10 @@ import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { getReportesNuevoIngreso } from 'src/routes/api/controllers/reportesController';
 import { notifications } from '@mantine/notifications';
 import { buildTablaReportesNuevoIngreso } from 'src/utils/helpers/reportesHelpers';
+import { useRef } from 'react';
+import { Menu, UnstyledButton, Text } from '@mantine/core';
+import { Filter } from 'tabler-icons-react';
+import DataChart from 'src/components/charts/DataChart';
 
 const ReportesNuevoIngreso = () => {
     // Heading y data almacenan la informacion de los encabezados y el contenido de la tabla, respectivamente
@@ -26,6 +30,15 @@ const ReportesNuevoIngreso = () => {
     const [exportar, setExportar] = useInputState('');
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [chartType] = useState('bar');
+    const chartRef = useRef(null);
+    const [selectedCarreras, setSelectedCarreras] = useState([]);
+    const [availableCarreras, setAvailableCarreras] = useState([]);
+    const [originalData, setOriginalData] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
+    const [menuOpened, setMenuOpened] = useState(false);
+    const [showByGender, setShowByGender] = useState(false);
 
     const handleTable = async() => {
         setIsLoading(true);
@@ -36,6 +49,33 @@ const ReportesNuevoIngreso = () => {
                 setHeading(header);
                 const reporte = buildTablaReportesNuevoIngreso(tabla.data);
                 setData(reporte);
+                setOriginalData(reporte);
+                
+                // Obtener todas las carreras disponibles
+                const carreras = reporte
+                    .filter((row) => row[0] !== 'Total')
+                    .map((row) => ({
+                        value: row[0],
+                        label: row[0],
+                        isTotal: false
+                    }));
+                
+                // Agregar opción de Total
+                carreras.push({
+                    value: 'Total',
+                    label: 'Total',
+                    isTotal: true
+                });
+                
+                setAvailableCarreras(carreras);
+                // Seleccionar todas las carreras por defecto
+                const allCarreras = carreras.map((c) => c.value);
+                setSelectedCarreras(allCarreras);
+                
+                // Actualizar la gráfica con todas las carreras
+                setChartData(prepareChartData(reporte, header, allCarreras));
+                setShowFilters(true);
+                
             } catch (error) {
                 setHeading([[], [], []]);
                 setData([]);
@@ -78,11 +118,108 @@ const ReportesNuevoIngreso = () => {
                 });
         }
     };
+
+    const prepareChartData = (tableData, headers, selected) => {
+        // Extraer periodos únicos
+        const periodos = new Set();
+        headers[0].forEach((header, index) => {
+            if (index > 0) {
+                const periodo = header.replace(" (H)", "").replace(" (M)", "");
+                periodos.add(periodo);
+            }
+        });
+
+        const carrerasMap = new Map();
+
+        // Procesar las carreras seleccionadas
+        tableData.forEach((row) => {
+            const carrera = row[0];
+            if (selected.includes(carrera)) {
+                const datosHombres = [];
+                const datosMujeres = [];
+                
+                for (let i = 1; i < row.length; i += 2) {
+                    datosHombres.push(parseInt(row[i]) || 0);
+                    datosMujeres.push(parseInt(row[i + 1]) || 0);
+                }
+                
+                carrerasMap.set(carrera, {
+                    hombres: datosHombres,
+                    mujeres: datosMujeres,
+                    total: datosHombres.map((h, idx) => h + datosMujeres[idx])
+                });
+            }
+        });
+
+        // Convertir el mapa a datasets
+        const datasets = [];
+        Array.from(carrerasMap.entries()).forEach(([carrera, datos]) => {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+
+            if (showByGender) {
+                // Dataset para hombres y mujeres separados
+                datasets.push({
+                    label: `${carrera} (H)`,
+                    data: datos.hombres,
+                    backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
+                    borderColor: `rgb(${r}, ${g}, ${b})`,
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: `${carrera} (M)`,
+                    data: datos.mujeres,
+                    backgroundColor: `rgba(${b}, ${r}, ${g}, 0.5)`,
+                    borderColor: `rgb(${b}, ${r}, ${g})`,
+                    borderWidth: 1
+                });
+            } else {
+                // Dataset combinado
+                datasets.push({
+                    label: carrera,
+                    data: datos.total,
+                    backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
+                    borderColor: `rgb(${r}, ${g}, ${b})`,
+                    borderWidth: 1
+                });
+            }
+        });
+
+        return {
+            labels: Array.from(periodos),
+            datasets: datasets
+        };
+    };
+
+    const handleCarreraSelection = (carrera) => {
+        const newSelected = selectedCarreras.includes(carrera.value)
+            ? selectedCarreras.filter((c) => c !== carrera.value)
+            : [...selectedCarreras, carrera.value];
+        
+        setSelectedCarreras(newSelected);
+        
+        const filteredData = newSelected.length === 0
+            ? originalData
+            : originalData.filter((row) => 
+                newSelected.includes(row[0]) || (row[0] === 'Total' && newSelected.includes('Total'))
+            );
+        
+        setData(filteredData);
+        setChartData(prepareChartData(filteredData, heading, newSelected));
+    };
+
+    const handleGenderView = () => {
+        const newShowByGender = !showByGender;
+        setShowByGender(newShowByGender);
+    
+        // Solo actualizamos la gráfica, la tabla se mantiene igual
+        setChartData(prepareChartData(data, heading, selectedCarreras));
+    };
+
     return(
-        <div style={{
-            width: '100vw',
-            padding: '3vw',
-        }}>
+        <div style={{ width: '100vw', padding: '3vw' }}>
             <Header color="naranja" section="Reportes" title="Nuevo Ingreso" route="/reportes" />
             <Flex align="center" justify="center" direction="column">
                 <fieldset className='filtros'>
@@ -104,7 +241,127 @@ const ReportesNuevoIngreso = () => {
                         <Button onClick={handleTable} disabled={(!cohorte || !numSemestres || !(examenYConv || trasladoYEquiv)) && !isLoading} color='negro'>{isLoading ? <Loader size='sm' color='#FFFFFF'/>  : "Filtrar"}</Button>
                     </Group>
                 </fieldset>
-                <Tabla colors="tabla-naranja" doubleHeader  headers={heading} content={data} />
+                {showFilters && (
+                    <Flex align="end" justify="flex-end" mb={20} gap={10}>
+                        <Button 
+                            variant="subtle" 
+                            size="sm"
+                            onClick={handleGenderView}
+                        >
+                            {showByGender ? 'Ver Total' : 'Ver por Género'}
+                        </Button>
+                        <Menu 
+                            shadow="md" 
+                            width={200}
+                            opened={menuOpened}
+                            onChange={setMenuOpened}
+                            closeOnItemClick={false}
+                        >
+                            <Menu.Target>
+                                <UnstyledButton 
+                                    sx={(theme) => ({
+                                        padding: '8px 12px',
+                                        borderRadius: theme.radius.sm,
+                                        color: theme.colors.gray[7],
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.gray[0],
+                                        },
+                                    })}
+                                >
+                                    <Flex align="center" gap={8}>
+                                        <Filter size={16} />
+                                        <Text size="sm">Filtrar Carreras</Text>
+                                    </Flex>
+                                </UnstyledButton>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                                {availableCarreras.map((carrera) => (
+                                    <Menu.Item 
+                                        key={carrera.value}
+                                        onClick={() => handleCarreraSelection(carrera)}
+                                    >
+                                        <Flex align="center" gap={8}>
+                                            {selectedCarreras.includes(carrera.value) ? '✓' : ' '}
+                                            <Text>{carrera.label}</Text>
+                                        </Flex>
+                                    </Menu.Item>
+                                ))}
+                            </Menu.Dropdown>
+                        </Menu>
+                        <Button 
+                            variant="subtle" 
+                            size="sm"
+                            onClick={() => {
+                                const allCarreras = availableCarreras.map((c) => c.value);
+                                setSelectedCarreras(allCarreras);
+                                setData(originalData);
+                                setChartData(prepareChartData(originalData, heading, allCarreras));
+                            }}
+                            mr={10}
+                        >
+                            Limpiar filtros
+                        </Button>
+                    </Flex>
+                )}
+                <Tabla colors="tabla-naranja" doubleHeader headers={heading} content={data} />
+                {chartData && (
+                    <div style={{
+                        width: '90%',
+                        height: '600px',
+                        margin: '2rem auto'
+                    }}>
+                        <DataChart 
+                            ref={chartRef}
+                            data={chartData}
+                            type={chartType}
+                            title={`Nuevo Ingreso ${showByGender ? 'por Género' : ''} - Cohorte ${cohorte}`}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'right',
+                                        labels: {
+                                            // Personalizar las etiquetas de la leyenda
+                                            generateLabels: (chart) => {
+                                                const labels = DataChart.defaults.plugins.legend.labels.generateLabels(chart);
+                                                return labels.map((label) => ({
+                                                    ...label,
+                                                    text: label.text // Puedes personalizar el texto aquí si lo necesitas
+                                                }));
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.dataset.label;
+                                                const value = context.raw;
+                                                return `${label}: ${value} estudiantes`;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Número de Estudiantes'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Periodo'
+                                        }
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
+                )}
             </Flex>
         </div>
     );

@@ -2,7 +2,7 @@ import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
-import {  useState } from 'react';
+import {  useState, useRef } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
 import "src/views/indices/Indices.css";
@@ -13,6 +13,7 @@ import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { getReportesEgresoTitulacion } from 'src/routes/api/controllers/reportesController';
 import { buildTablaReportes } from '../../utils/helpers/reportesHelpers';
 import { notifications } from '@mantine/notifications';
+import DataChart from 'src/components/charts/DataChart';
 
 const ReportesEgreso = () => {
     // Heading y data almacenan la informacion de los encabezados y el contenido de la tabla, respectivamente
@@ -26,6 +27,9 @@ const ReportesEgreso = () => {
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [chartType] = useState('line'); // line chart es mejor para ver eficiencia
+    const chartRef = useRef(null);
 
     const handleTable = async() => {
         setIsLoading(true);
@@ -36,6 +40,8 @@ const ReportesEgreso = () => {
                 setHeading(headers);
                 const reporte = buildTablaReportes(tabla.data);
                 setData(reporte);
+                // Actualizar la gráfica
+                setChartData(prepareChartData(reporte, headers));
             } catch (error) {
                 setHeading([[],[], []]);
                 setData([]);
@@ -78,6 +84,30 @@ const ReportesEgreso = () => {
                 });
         }
     };
+
+    const prepareChartData = (tableData, headers) => {
+    
+        // La eficiencia está en la última columna de cada fila
+        const datasets = [];
+        const eficiencias = tableData.map((row) => ({
+            carrera: row[0],
+            eficiencia: parseFloat(row[row.length - 1]) || 0
+        }));
+    
+        datasets.push({
+            label: 'Eficiencia de Egreso',
+            data: eficiencias.map((e) => e.eficiencia),
+            backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
+            borderColor: 'rgb(255, 120, 90)',
+            borderWidth: 2
+        });
+    
+        return {
+            labels: eficiencias.map((e) => e.carrera),
+            datasets: datasets
+        };
+    };
+
     return(
         <div style={{
             width: '100vw',
@@ -105,6 +135,52 @@ const ReportesEgreso = () => {
                     </Group>
                 </fieldset>
                 <Tabla colors="tabla-toronja" tripleHeader  headers={heading} content={data} />
+                
+                {chartData && (
+                    <div style={{
+                        width: '90%',
+                        height: '600px',
+                        margin: '2rem auto'
+                    }}>
+                        <DataChart 
+                            ref={chartRef}
+                            data={chartData}
+                            type={chartType}
+                            title={`Eficiencia de Egreso - Cohorte ${cohorte}`}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                return `${context.dataset.label}: ${context.raw}%`;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Porcentaje de Eficiencia'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Carrera'
+                                        }
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
+                )}
             </Flex>
         </div>
     );

@@ -93,14 +93,18 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
 
 export function getNuevoIngresoHeaders(cohorte, numSemestres) {
     const tabla = [];
-    tabla.push(['Carrera', 'Nuevo Ingreso']);
-    tabla.push(['']);
+    const headerRow = ['Carrera'];
+    const periodosRow = [''];
+    
     let periodo = cohorte.split("-");
     for (let i = 0; i < numSemestres; i++) {
-        tabla[1].push(periodo[0]+"-"+periodo[1]+" (H/M)");
-        tabla[1].push('');
+        headerRow.push(`${periodo[0]}-${periodo[1]} (H)`);
+        headerRow.push(`${periodo[0]}-${periodo[1]} (M)`);
         periodo = anioPeriodo(periodo);
     }
+
+    tabla.push(headerRow);
+    tabla.push(periodosRow);
     return tabla;
 }
 
