@@ -119,7 +119,7 @@ const ReportesNuevoIngreso = () => {
         }
     };
 
-    const prepareChartData = (tableData, headers, selected) => {
+    const prepareChartData = (tableData, headers, selected, showGender) => {
         // Extraer periodos únicos
         const periodos = new Set();
         headers[0].forEach((header, index) => {
@@ -158,7 +158,7 @@ const ReportesNuevoIngreso = () => {
             const g = Math.floor(Math.random() * 255);
             const b = Math.floor(Math.random() * 255);
 
-            if (showByGender) {
+            if (showGender) {
                 // Dataset para hombres y mujeres separados
                 datasets.push({
                     label: `${carrera} (H)`,
@@ -214,8 +214,8 @@ const ReportesNuevoIngreso = () => {
         const newShowByGender = !showByGender;
         setShowByGender(newShowByGender);
     
-        // Solo actualizamos la gráfica, la tabla se mantiene igual
-        setChartData(prepareChartData(data, heading, selectedCarreras));
+        // Usar newShowByGender en lugar de showByGender
+        setChartData(prepareChartData(data, heading, selectedCarreras, newShowByGender));
     };
 
     return(

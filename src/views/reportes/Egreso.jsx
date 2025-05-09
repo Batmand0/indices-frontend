@@ -94,6 +94,7 @@ const ReportesEgreso = () => {
             eficiencia: parseFloat(row[row.length - 1]) || 0
         }));
     
+        // La eficiencia de egreso es la ultima columna de la tabla
         datasets.push({
             label: 'Eficiencia de Egreso',
             data: eficiencias.map((e) => e.eficiencia),
