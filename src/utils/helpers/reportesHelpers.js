@@ -15,7 +15,6 @@ export const buildTablaReportesNuevoIngreso = (data) => {
 
 export const buildTablaReportes = (data) => {
     const datos= Object.entries(data);
-    // console.log(datos);
     const tabla = [];
     datos.forEach((registros) => {
         // Se agrega el nombre de la carrera

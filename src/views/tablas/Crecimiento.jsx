@@ -20,7 +20,7 @@ const TablaCrecimiento = () => {
     const [heading, setHeading] = useState([]);
     const [data, setData] = useState([]);
     const [chartData, setChartData] = useState(null);
-    const [chartType, setChartType] = useState('line'); // line chart es mejor para ver crecimiento
+    const [chartType, setChartType] = useState('bar'); 
     const chartRef = useRef(null);
 
     const handleTable = async() => {

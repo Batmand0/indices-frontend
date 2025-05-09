@@ -56,38 +56,71 @@ export function anioPeriodo(periodoAnterior) {
 }
 
 export function getReportesHeaders(tipo, cohorte, numSemestres){
+    // Arreglo que contendrá las tres filas del header
     const tabla = [];
-    const firstRow = ['Carrera', 'Nuevo Ingreso', '', `Año de ${tipo === 1 ? 'titulación' : 'egreso'}`, ''];
+
+    // Primera fila: contiene títulos principales
+    // tipo === 1 ? 'titulación' : 'egreso' -> si tipo es 1 muestra 'titulación', si no muestra 'egreso'
+    const firstRow = [
+        'Carrera',              // Columna para nombre de carrera
+        'Nuevo Ingreso', '',    // Columnas para nuevo ingreso (H/M)
+        `Año de ${tipo === 1 ? 'titulación' : 'egreso'}`, '' // Columnas para año (H/M)
+    ];
+
+    // Segunda fila: contendrá los periodos
+    // Espacios vacíos que se alinean con las columnas de la primera fila
     const secondRow = [' ', ' ', ' '];
+
+    // Tercera fila: contendrá los números de semestre
+    // Espacios vacíos que se alinean con las columnas de la primera fila
     const thirdRow = [' ', ' ', ' '];
+
+    // Separamos el periodo inicial (ejemplo: "2020-1" -> ["2020", "1"])
     let periodo = cohorte.split("-");
+
+    // Avanzamos 8 periodos desde el inicio (4 años)
     for (let i = 0; i < 8; i++){
         periodo = anioPeriodo(periodo);
     }
+
+    // Agregamos columnas para los semestres del 9 al 12 (o hasta numSemestres si es menor)
     for (let i = 9; i <= (numSemestres >= 12 ? 12 : numSemestres); i++) {
         if (i > 9) {
+            // Agregamos espacios vacíos para mantener alineación H/M
             firstRow.push('', '');
         }
+        // Agregamos el periodo con formato "YYYY-P (H/M)"
         secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)");
-        secondRow.push('');
+        secondRow.push(''); // Espacio para M
         periodo = anioPeriodo(periodo);
+        // Agregamos el número de semestre
         thirdRow.push(i);
-        thirdRow.push('');
+        thirdRow.push(''); // Espacio para mantener alineación
     }
+
+    // Agregamos las columnas finales para eficiencia
     firstRow.push('');
     firstRow.push(`Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`);
     secondRow.push("Total",' ');
     thirdRow.push(' ', ' ');
+
+    // Si son más de 12 semestres, agregamos columnas adicionales
     if (numSemestres > 12) {
-        firstRow.push(`Año  de ${tipo === 1 ? 'titulación' : 'egreso'}`, '', `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`);
+        firstRow.push(
+            `Año  de ${tipo === 1 ? 'titulación' : 'egreso'}`, '', // Columnas para año adicional
+            `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}` // Columna para eficiencia adicional
+        );
         secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)");
         secondRow.push('');
         thirdRow.push(13);
         thirdRow.push('');
     }
-    tabla.push(firstRow);
-    tabla.push(secondRow);
-    tabla.push(thirdRow);
+
+    // Agregamos las tres filas a la tabla en orden
+    tabla.push(firstRow);  // Primera fila: títulos
+    tabla.push(secondRow); // Segunda fila: periodos
+    tabla.push(thirdRow);  // Tercera fila: números de semestre
+
     return tabla;
 }
 

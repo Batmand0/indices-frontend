@@ -97,7 +97,7 @@ const ReportesEgreso = () => {
             carrera: row[0],
             eficiencia: parseFloat(row[row.length - 4]) || 0
         }));
-        if(numSemestres > 9){
+        if(numSemestres > 12){
             datasets.push({
                 label: 'Eficiencia de Egreso a 9 semestres',
                 data: eficiencias2.map((e) => e.eficiencia),
