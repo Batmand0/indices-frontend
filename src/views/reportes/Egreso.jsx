@@ -41,7 +41,7 @@ const ReportesEgreso = () => {
                 const reporte = buildTablaReportes(tabla.data);
                 setData(reporte);
                 // Actualizar la gráfica
-                setChartData(prepareChartData(reporte, headers));
+                setChartData(prepareChartData(reporte, numSemestres));
             } catch (error) {
                 setHeading([[],[], []]);
                 setData([]);
@@ -85,7 +85,7 @@ const ReportesEgreso = () => {
         }
     };
 
-    const prepareChartData = (tableData, headers) => {
+    const prepareChartData = (tableData, numSemestres) => {
     
         // La eficiencia está en la última columna de cada fila
         const datasets = [];
@@ -93,15 +93,38 @@ const ReportesEgreso = () => {
             carrera: row[0],
             eficiencia: parseFloat(row[row.length - 1]) || 0
         }));
-    
-        // La eficiencia de egreso es la ultima columna de la tabla
-        datasets.push({
-            label: 'Eficiencia de Egreso',
-            data: eficiencias.map((e) => e.eficiencia),
-            backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
-            borderColor: 'rgb(255, 120, 90)',
-            borderWidth: 2
-        });
+        const eficiencias2 = tableData.map((row) => ({
+            carrera: row[0],
+            eficiencia: parseFloat(row[row.length - 4]) || 0
+        }));
+        if(numSemestres > 9){
+            datasets.push({
+                label: 'Eficiencia de Egreso a 9 semestres',
+                data: eficiencias2.map((e) => e.eficiencia),
+                backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
+                borderColor: 'rgb(255, 120, 90)',
+                borderWidth: 2
+            });
+
+            // La eficiencia de egreso es la última columna de la tabla
+            datasets.push({
+                label: `Eficiencia de Egreso a ${numSemestres} semestres`,
+                data: eficiencias.map((e) => e.eficiencia),
+                backgroundColor: 'rgba(90, 120, 255, 0.5)', // Color azul
+                borderColor: 'rgb(90, 120, 255)',
+                borderWidth: 2
+            });
+        } else{
+            // La eficiencia de egreso es la ultima columna de la tabla
+            datasets.push({
+                label: 'Eficiencia de Egreso',
+                data: eficiencias.map((e) => e.eficiencia),
+                backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
+                borderColor: 'rgb(255, 120, 90)',
+                borderWidth: 2
+            });
+        }
+        
     
         return {
             labels: eficiencias.map((e) => e.carrera),
