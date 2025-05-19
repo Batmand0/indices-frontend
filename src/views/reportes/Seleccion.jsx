@@ -13,9 +13,9 @@ const SeleccionReportes = () => {
         }}>
             <Header color="naranja" section="Reportes" title="" route="/" />
             <Group mt={15}>
-                <BoxOption color="naranja" route="/reportes/nuevo-ingreso" label="Nuevo Ingreso" />
-                <BoxOption color="toronja" route="/reportes/egreso" label="Egresados" />
-                <BoxOption color="naranja" route="/reportes/titulacion" label="Titulados" />
+                <BoxOption color="naranja" route="/reportes/nuevo-ingreso" label="Nuevo Ingreso" icon="indices.svg" />
+                <BoxOption color="toronja" route="/reportes/egreso" label="Egresados" icon="alumnos.svg" />
+                <BoxOption color="naranja" route="/reportes/titulacion" label="Titulados" icon="cedulas.svg"/>
 
             </Group>
         </div>

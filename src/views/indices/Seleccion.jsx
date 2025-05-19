@@ -13,10 +13,10 @@ const SeleccionIndices = () => {
         }}>
             <Header color="toronja" section="Indices" title="" route="/" />
             <Group mt={15}>
-                <BoxOption color="toronja" route="/indices/permanencia" label="Indices de Permanencia" />
-                <BoxOption color="naranja" route="/indices/egreso" label="Indices de Egreso" />
-                <BoxOption color="toronja" route="/indices/titulacion" label="Indices de Titulación" />
-                <BoxOption color="naranja" route="/indices/desercion" label="Indices de Deserción" />
+                <BoxOption color="toronja" route="/indices/permanencia" label="Indices de Permanencia" icon="registros.svg" />
+                <BoxOption color="naranja" route="/indices/egreso" label="Indices de Egreso" icon="cedulas.svg"/>
+                <BoxOption color="toronja" route="/indices/titulacion" label="Indices de Titulación" icon="alumnos.svg"/>
+                <BoxOption color="naranja" route="/indices/desercion" label="Indices de Deserción" icon="indices.svg"/>
             </Group>
         </div>
     );

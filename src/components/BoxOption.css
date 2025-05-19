@@ -1,0 +1,45 @@
+.box-option {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    background-color: #F0F0F0;
+    padding: 15px 10px;
+    min-width: 250px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.box-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background-color: #E8E8E8;
+}
+
+.box-option-text {
+    transition: transform 0.3s ease;
+}
+
+.box-option:hover .box-option-text {
+    transform: scale(1.05);
+}
+
+.box-option-icon {
+    transition: transform 0.3s ease;
+}
+
+.box-option:hover .box-option-icon {
+    transform: scale(1.1);
+}
+
+.box-option-arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.box-option:hover .box-option-arrow {
+    transform: rotate(90deg);
+}

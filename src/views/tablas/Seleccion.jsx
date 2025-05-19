@@ -13,8 +13,8 @@ const SeleccionTablas = () => {
         }}>
             <Header color="toronja" section="Tablas" title="" route="/" />
             <Group mt={15}>
-                <BoxOption color="toronja" route="/tablas/poblacion" label="Tablas de Población" />
-                <BoxOption color="naranja" route="/tablas/crecimiento" label="Tablas de Crecimiento" />
+                <BoxOption color="toronja" route="/tablas/poblacion" label="Tablas de Población" icon="tablas.svg"/>
+                <BoxOption color="naranja" route="/tablas/crecimiento" label="Tablas de Crecimiento" icon="indices.svg" />
             </Group>
         </div>
     );

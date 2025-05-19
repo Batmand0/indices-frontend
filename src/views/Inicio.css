@@ -12,11 +12,39 @@
     align-items: center;
     text-decoration: none;
     color: #000;
+    transition: all 0.3s ease; /* Agregar transición suave */
+    position: relative;
+}
+
+.block:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.block::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: #FF785A; /* Color toronja */
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.block:hover::after {
+    width: 100%;
 }
 
 .block > img {
     width: 150px;
     height: 150px;
+    transition: transform 0.3s ease;
+}
+
+.block:hover img {
+    transform: scale(1.1);
 }
 
 .logos {
