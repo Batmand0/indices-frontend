@@ -1,13 +1,13 @@
 .block {
-    padding: 20px;
-    width: 15vw;
-    min-width: 200px;
-    max-height: 270px;
+    padding: 15px;  /* Reducido de 20px */
+    width: 12vw;    /* Reducido de 15vw */
+    min-width: 180px;  /* Reducido de 200px */
+    max-height: 250px; /* Reducido de 270px */
     background-color: #ECECEC;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;      /* Reducido de 15px */
     justify-content: center;
     align-items: center;
     text-decoration: none;
@@ -38,8 +38,8 @@
 }
 
 .block > img {
-    width: 150px;
-    height: 150px;
+    width: 130px;    /* Reducido de 150px */
+    height: 130px;   /* Reducido de 150px */
     transition: transform 0.3s ease;
 }
 

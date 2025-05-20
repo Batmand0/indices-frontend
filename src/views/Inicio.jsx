@@ -57,6 +57,12 @@ const Principal = () => {
                     <h3>Alumnos</h3>
                     <img src="/img/alumnos.svg" alt="Icono Alumnos" />
                 </div>
+                <div className="block" onClick={() => {
+                                navigate('/registro');
+                            }}> 
+                    <h3>Registros</h3>
+                    <img src="/img/registros.svg" alt="Icono Registros" />
+                </div>
             </Group>
             <Center>
                 <Button mt={ 32 } color="naranja" leftIcon={<Upload />} onClick={toSubirArchivos}>

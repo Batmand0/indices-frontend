@@ -1,5 +1,5 @@
 import "./navbar.css";
-import { ChevronDown, Home, Search, UserCircle, X } from "tabler-icons-react";
+import { Home, Search, UserCircle, X } from "tabler-icons-react";
 import {
     Header,
     Menu,
@@ -124,27 +124,6 @@ const NavBar = () => {
                 </Group>
 
                 <Group >
-                    {/* Menu de registros */}
-                    <Menu trigger="hover" openDelay={100} closeDelay={400}>
-                        <Menu.Target className={classes.menus}>
-                            <Button color="negro">
-                                REGISTROS
-                                <ChevronDown size={16} strokeWidth={2} color={'white'} />
-                            </Button>
-                        </Menu.Target>
-
-                        <Menu.Dropdown className={classes.menus}>
-                            <Menu.Item onClick={()=>{
-                                navigate('/registro/carrera');
-                                }}>CARRERAS</Menu.Item>
-                            <Menu.Item onClick={()=>{
-                                navigate('/registro/planes');
-                                }}>PLANES DE ESTUDIO</Menu.Item>
-                            <Menu.Item onClick={()=>{
-                                navigate('/registro/discapacidades');
-                                }}>DISCAPACIDADES</Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
                 </Group>
                 {/* Menu movil */}
                 <Menu trigger="click" opened={opend} onChange={toggle} openDelay={100} closeDelay={400} position="right" >
