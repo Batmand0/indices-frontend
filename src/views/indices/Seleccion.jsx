@@ -11,7 +11,7 @@ const SeleccionIndices = () => {
             width: '100vw',
             padding: '3vw',
         }}>
-            <Header color="toronja" section="Indices" title="" route="/" />
+            <Header color="naranja" section="Indices" title="" route="/" />
             <Group mt={15}>
                 <BoxOption color="toronja" route="/indices/permanencia" label="Indices de Permanencia" icon="registros.svg" />
                 <BoxOption color="naranja" route="/indices/egreso" label="Indices de Egreso" icon="cedulas.svg"/>

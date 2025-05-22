@@ -126,7 +126,7 @@ const IndiceTitulacion = () => {
             padding: '3vw',
         }}>
             <Header 
-                color="naranja" 
+                color="toronja" 
                 section="Indices" 
                 title={`Titulación ${modoGeneracional ? 'Generacional' : 'por cohorte generacional'}`}  
                 route="/indices" 

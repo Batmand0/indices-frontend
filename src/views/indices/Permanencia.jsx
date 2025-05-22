@@ -164,7 +164,7 @@ const IndicePermanencia = () => {
             padding: '3vw',
         }}>
             <Header 
-                color="naranja" 
+                color="toronja" 
                 section="Indices" 
                 title={`Permanencia ${modoGeneracional ? 'Generacional' : 'por cohorte generacional'}`}  
                 route="/indices" 
