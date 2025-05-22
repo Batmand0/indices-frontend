@@ -13,7 +13,7 @@ const SeleccionRegistros = () => {
         }}>
             <Header color="toronja" section="Registros" title="" route="/" />
             <Group mt={15}>
-                <BoxOption color="toronja" route="/registro/carreras" label="Registros de Carrera" icon="tablas.svg"/>
+                <BoxOption color="toronja" route="/registro/carrera" label="Registros de Carrera" icon="tablas.svg"/>
                 <BoxOption color="naranja" route="/registro/planes" label="Registro de Planes de estudio" icon="subir-archivos.svg" />
                 <BoxOption color="toronja" route="/registro/discapacidades" label="Registro de Discapacidades" icon="alumnos.svg" />
             </Group>
