@@ -54,89 +54,170 @@ const SubirArchivos = () => {
             <Group position='center'>
                 <p>Aqui se suben los archivos que utiliza el sistema para trabajar, estos deberan ser cargados una vez por semestre.<br />Los archivos deben de seguir el siguiente formato para ser aceptados en el sistema.</p>
                 <LoadingOverlay visible={isLoading} />
-                <div>
-                    {/* Alumnos inscritos en el semestre */}
-                    <Dropzone accept="MS_EXCEL_MIME_TYPE" onDrop={(file) => {
-                        subirArchivos(file, 'ingresos');
-                    }
-                    }>
+                
+                <div className="file-upload-container">
+                    <Dropzone 
+                        className="dropzone"
+                        accept="MS_EXCEL_MIME_TYPE" 
+                        onDrop={(file) => subirArchivos(file, 'ingresos')}
+                    >
                         <Flex align="center" direction="column" position="center" gap="xl">
                             <Text fw={700} tt="capitalize">Alumnos Inscritos</Text>
-                            {/* Es un icono */}
-                            <FileUpload  size={72} color="#FFAA5A"/>
+                            <FileUpload className="file-icon" size={72} color="#FFAA5A"/>
                             <FileButton color='naranja'>
-                                {(props) => <Button color="naranja" leftIcon={<Upload />}>Subir Archivos</Button>}
+                                {(props) => (
+                                    <Button 
+                                        color="naranja"
+                                    >
+                                        Subir Archivos
+                                    </Button>
+                                )}
                             </FileButton>
                         </Flex>
                     </Dropzone>
-                    <Link style={{ textDecoration: 'none'}} to="/documents/plantillas/excel/Plantilla_Lista_Alumnos.xlsx" target="_blank" download >
-                        <Button rightIcon={<Download />} styles="textDecoration: none;" variant='light' color='gris' fullWidth mt="10px">Descargar Plantilla</Button>
+                    <Link 
+                        style={{ textDecoration: 'none'}} 
+                        to="/documents/plantillas/excel/Plantilla_Lista_Alumnos.xlsx" 
+                        target="_blank" 
+                        download
+                    >
+                        <Button 
+                            className="template-button"
+                            rightIcon={<Download />} 
+                            variant='light' 
+                            color='gris' 
+                            fullWidth 
+                            mt="10px"
+                        >
+                            Descargar Plantilla
+                        </Button>
                     </Link>
                 </div>
 
-                <div>
-                    {/* Alumnos egresados */}
-                    <Dropzone accept="MS_EXCEL_MIME_TYPE" onDrop={(file) => {
-                        subirArchivos(file, 'egresos');
-                    }}>
+                <div className="file-upload-container">
+                    <Dropzone 
+                        className="dropzone"
+                        accept="MS_EXCEL_MIME_TYPE" 
+                        onDrop={(file) => subirArchivos(file, 'egresos')}
+                    >
                         <Flex align="center" direction="column" position="center" gap="xl">
                             <Text fw={700} tt="capitalize">Egresados</Text>
-                            {/* Es un icono */}
-                            <FileUpload  size={72} color="#FFAA5A"/>
+                            <FileUpload className="file-icon" size={72} color="#FFAA5A"/>
                             <FileButton color='naranja'>
-                                {(props) => <Button color="naranja" leftIcon={<Upload />}>Subir Archivos</Button>}
+                                {(props) => (
+                                    <Button 
+                                        color="naranja" 
+                                        leftIcon={<Upload />}
+                                    >
+                                        Subir Archivos
+                                    </Button>
+                                )}
                             </FileButton>
                         </Flex>
-
                     </Dropzone>
-                    <Link style={{ textDecoration: 'none'}} to="/documents/plantillas/excel/Plantilla_Lista_Egresados.xlsx" target="_blank" download >
-                        <Button rightIcon={<Download />} styles="textDecoration: none;" variant='light' color='gris' fullWidth mt="10px">Descargar Plantilla</Button>
+                    <Link 
+                        style={{ textDecoration: 'none'}} 
+                        to="/documents/plantillas/excel/Plantilla_Lista_Egresados.xlsx" 
+                        target="_blank" 
+                        download
+                    >
+                        <Button 
+                            className="template-button"
+                            rightIcon={<Download />} 
+                            variant='light' 
+                            color='gris' 
+                            fullWidth 
+                            mt="10px"
+                        >
+                            Descargar Plantilla
+                        </Button>
                     </Link>
                 </div>
 
-                <div>
-                    {/* Alumnos titulados */}
-                    <Dropzone accept="MS_EXCEL_MIME_TYPE" onDrop={(file) => {
-                        subirArchivos(file, 'titulaciones');
-                    }}>
+                <div className="file-upload-container">
+                    <Dropzone 
+                        className="dropzone"
+                        accept="MS_EXCEL_MIME_TYPE" 
+                        onDrop={(file) => subirArchivos(file, 'titulaciones')}
+                    >
                         <Flex align="center" direction="column" position="center" gap="xl">
                             <Text fw={700} tt="capitalize">Titulados</Text>
-                            {/* Es un icono */}
-                            <FileUpload  size={72} color="#FFAA5A"/>
+                            <FileUpload className="file-icon" size={72} color="#FFAA5A"/>
                             <FileButton color='naranja'>
-                                {(props) => <Button color="naranja" leftIcon={<Upload />}>Subir Archivos</Button>}
+                                {(props) => (
+                                    <Button 
+                                        color="naranja" 
+                                        leftIcon={<Upload />}
+                                    >
+                                        Subir Archivos
+                                    </Button>
+                                )}
                             </FileButton>
                         </Flex>
-
                     </Dropzone>
-                    <Link style={{ textDecoration: 'none'}} to="/documents/plantillas/excel/Plantilla_Lista_Titulados.xlsx" target="_blank" download >
-                        <Button rightIcon={<Download />} styles="textDecoration: none;" variant='light' color='gris' fullWidth mt="10px">Descargar Plantilla</Button>
+                    <Link 
+                        style={{ textDecoration: 'none'}} 
+                        to="/documents/plantillas/excel/Plantilla_Lista_Titulados.xlsx" 
+                        target="_blank" 
+                        download
+                    >
+                        <Button 
+                            className="template-button"
+                            rightIcon={<Download />} 
+                            variant='light' 
+                            color='gris' 
+                            fullWidth 
+                            mt="10px"
+                        >
+                            Descargar Plantilla
+                        </Button>
                     </Link>
                 </div>
 
-                <div>
-                    {/* Liberación de ingles */}
-                    <Dropzone accept="MS_EXCEL_MIME_TYPE" onDrop={(file) => {
-                    subirArchivos(file, 'liberaciones-ingles');
-                    }}>
+                <div className="file-upload-container">
+                    <Dropzone 
+                        className="dropzone"
+                        accept="MS_EXCEL_MIME_TYPE" 
+                        onDrop={(file) => subirArchivos(file, 'liberaciones-ingles')}
+                    >
                         <Flex align="center" direction="column" position="center" gap="xl">
                             <Text fw={700} tt="capitalize">Liberación de ingles</Text>
-                            {/* Es un icono */}
-                            <FileUpload  size={72} color="#FFAA5A"/>
+                            <FileUpload className="file-icon" size={72} color="#FFAA5A"/>
                             <FileButton color='naranja'>
-                                {(props) => <Button color="naranja" leftIcon={<Upload />}>Subir Archivos</Button>}
+                                {(props) => (
+                                    <Button 
+                                        color="naranja" 
+                                        leftIcon={<Upload />}
+                                    >
+                                        Subir Archivos
+                                    </Button>
+                                )}
                             </FileButton>
                         </Flex>
                     </Dropzone>
-                    <Link style={{ textDecoration: 'none'}} to="/documents/plantillas/excel/Plantilla_Lista_LiberacionIngles.xlsx" target="_blank" download >
-                        <Button rightIcon={<Download />} styles="textDecoration: none;" variant='light' color='gris' fullWidth mt="10px">Descargar Plantilla</Button>
+                    <Link 
+                        style={{ textDecoration: 'none'}} 
+                        to="/documents/plantillas/excel/Plantilla_Lista_LiberacionIngles.xlsx" 
+                        target="_blank" 
+                        download
+                    >
+                        <Button 
+                            className="template-button"
+                            rightIcon={<Download />} 
+                            variant='light' 
+                            color='gris' 
+                            fullWidth 
+                            mt="10px"
+                        >
+                            Descargar Plantilla
+                        </Button>
                     </Link>
                 </div>
                 <ResultadosLog opened={opened} close={handlers.close} info={info}/>
             </Group>
             <Center mt="sm">
                 <Link style={{ textDecoration: 'none'}} to="/documents/plantillas/pdf/Manual de usuario.pdf" target="_blank" download >
-                    <Button rightIcon={<Download />}  variant='filled' color='negro'  mt="10px">Descargar Manual</Button>
+                    <Button rightIcon={<Download />} className="template-button" variant='filled' color='negro'  mt="10px">Descargar Manual</Button>
                 </Link>
             </Center>
         </Container>
