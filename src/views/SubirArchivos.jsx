@@ -217,7 +217,7 @@ const SubirArchivos = () => {
             </Group>
             <Center mt="sm">
                 <Link style={{ textDecoration: 'none'}} to="/documents/plantillas/pdf/Manual de usuario.pdf" target="_blank" download >
-                    <Button rightIcon={<Download />} className="template-button" variant='filled' color='negro'  mt="10px">Descargar Manual</Button>
+                    <Button rightIcon={<Download />}  variant='filled' color='negro'  mt="10px">Descargar Manual</Button>
                 </Link>
             </Center>
         </Container>

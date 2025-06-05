@@ -274,6 +274,13 @@ const TablaPoblacion = () => {
                                 </Menu.Dropdown>
                             </Menu>
                             <Button 
+                                sx={(theme) => ({
+                                        transition: 'all 0.3s ease',
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.toronja[5],
+                                            color: theme.white
+                                        },
+                                    })}
                                 variant="subtle" 
                                 size="sm"
                                 onClick={() => {

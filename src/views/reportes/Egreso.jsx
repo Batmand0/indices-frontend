@@ -99,7 +99,7 @@ const ReportesEgreso = () => {
         }));
         if(numSemestres > 12){
             datasets.push({
-                label: 'Eficiencia de Egreso a 9 semestres',
+                label: 'Eficiencia de Egreso a 12 semestres',
                 data: eficiencias2.map((e) => e.eficiencia),
                 backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
                 borderColor: 'rgb(255, 120, 90)',
