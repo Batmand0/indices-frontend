@@ -2,9 +2,10 @@ import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
+import "./Indices.css";
 import { getIndicesHeaders } from 'src/utils/helpers/headerHelpers';
 import { Download, Printer, X } from 'tabler-icons-react';
 import { buildTablaIndices, buildTablaIndicesGeneracional } from 'src/utils/helpers/indicesHelpers';
@@ -12,12 +13,18 @@ import { getIndicesData, getIndicesDataGeneracional } from 'src/routes/api/contr
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { notifications } from '@mantine/notifications';
+import DataChart from 'src/components/charts/DataChart';
+
 
 const IndiceTitulacion = () => {
     const [isLoading, setIsLoading] = useState(false);
     // Heading y data almacenan la informacion de los encabezados y el contenido de la tabla, respectivamente
     const [heading, setHeading] = useState([[],[]]);
     const [data, setData] = useState([]);
+
+    // chartData y chartType almacenan la información del gráfico, aunque en este caso no se usa
+    const [chartData, setChartData] = useState(null);
+    const [chartType, setChartType] = useState('line');
     // Cohorte, carrera y numSemestres son los datos de los Select
     const [cohorte, setCohorte] = useInputState('');
     const [carrera, setCarrera] = useInputState('');
@@ -25,6 +32,7 @@ const IndiceTitulacion = () => {
     const [exportar, setExportar] = useInputState('');
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
+    const chartRef = useRef(null);
 
     // Nuevo estado para modo generacional
     const [modoGeneracional, setModoGeneracional] = useState(false);
@@ -45,6 +53,34 @@ const IndiceTitulacion = () => {
         }
         fetchCarreras();
     }, [modoGeneracional]);
+
+    const prepareChartData = (tableData, headers) => {
+        if (modoGeneracional) {
+            return {
+                labels: tableData.map((row) => row[0]), // Generaciones
+                datasets: [
+                    {
+                        label: 'Tasa de Titulación',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)'
+                    }
+                ]
+            };
+        } else {
+            return {
+                labels: tableData.map((row) => row[1]), // Periodos
+                datasets: [
+                    {
+                        label: 'Tasa de Titulación',
+                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)'
+                    }
+                ]
+            };
+        }
+    };
 
     // Manejador para generar la tabla con los datos filtrados
     const handleTable = async() => {
@@ -69,6 +105,7 @@ const IndiceTitulacion = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('titulacion', tabla.data, numSemestres);
                     setData(datos);
+                    setChartData(prepareChartData(datos, headers));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
@@ -81,6 +118,7 @@ const IndiceTitulacion = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('titulacion', tabla.data, numSemestres);
                     setData(datos);
+                    setChartData(prepareChartData(datos, headers));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -102,7 +140,8 @@ const IndiceTitulacion = () => {
         const tipoAlumno = examenYConv && trasladoYEquiv ? 1 : examenYConv ? 2 : 3;
         try {
             if (exportar === 'PDF') {
-                await generatePDF('Titulación', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera);
+                await generatePDF('Titulación', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera, chartRef);
+                // Pasar la referencia de la gráfica);
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Indice Titulacion', cohorte, numSemestres, tipoAlumno);
             }
@@ -154,6 +193,26 @@ const IndiceTitulacion = () => {
                     </Group>
                 </fieldset>
                 <Tabla doubleHeader colors="tabla-toronja"  headers={heading} content={data} />
+                {chartData && (
+                                    <div style={{
+                                        width: '90%',
+                                        height: '600px',
+                                        margin: '2rem auto'
+                                    }}>
+                                    <DataChart 
+                                        ref={chartRef}
+                                        data={chartData}
+                                        type={chartType}
+                                        title={modoGeneracional ? "Análisis de Titulación por Generación" : "Análisis de Titulación por Periodo"}
+                                        onTypeChange={setChartType}
+                                        options={{
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            // ...existing options...
+                                        }}
+                                    />
+                                </div> 
+                                )}
             </Flex>
         </div>
     );
