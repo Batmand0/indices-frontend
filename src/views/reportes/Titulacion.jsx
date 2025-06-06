@@ -2,17 +2,18 @@ import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
-import {  useState } from 'react';
+import {  useState, useRef } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
 import "src/views/indices/Indices.css";
 import { getReportesHeaders } from 'src/utils/helpers/headerHelpers';
-import { Printer, X } from 'tabler-icons-react';
+import { Download, Printer, X } from 'tabler-icons-react';
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { getReportesEgresoTitulacion } from 'src/routes/api/controllers/reportesController';
 import { notifications } from '@mantine/notifications';
 import { buildTablaReportes } from 'src/utils/helpers/reportesHelpers';
+import DataChart from 'src/components/charts/DataChart';
 
 const ReportesTitulacion = () => {
     // Heading y data almacenan la informacion de los encabezados y el contenido de la tabla, respectivamente
@@ -26,6 +27,56 @@ const ReportesTitulacion = () => {
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [chartData, setChartData] = useState(null);
+    const [chartType] = useState('line'); // line chart es mejor para ver eficiencia
+    const chartRef = useRef(null);
+
+    const prepareChartData = (tableData, numSemestres) => {
+    
+        // La eficiencia está en la última columna de cada fila
+        const datasets = [];
+        const titulaciones = tableData.map((row) => ({
+            carrera: row[0],
+            titulacion: parseFloat(row[row.length - 1]) || 0
+        }));
+        const titulaciones2 = tableData.map((row) => ({
+            carrera: row[0],
+            titulacion: parseFloat(row[row.length - 4]) || 0
+        }));
+        if(numSemestres > 12){
+            datasets.push({
+                label: 'Eficiencia de Titulación a 12 semestres',
+                data: titulaciones2.map((e) => e.titulacion),
+                backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
+                borderColor: 'rgb(255, 120, 90)',
+                borderWidth: 2
+            });
+
+            // La eficiencia de egreso es la última columna de la tabla
+            datasets.push({
+                label: `Eficiencia de Titulación a ${numSemestres} semestres`,
+                data: titulaciones.map((e) => e.titulacion),
+                backgroundColor: 'rgba(90, 120, 255, 0.5)', // Color azul
+                borderColor: 'rgb(90, 120, 255)',
+                borderWidth: 2
+            });
+        } else{
+            // La eficiencia de egreso es la ultima columna de la tabla
+            datasets.push({
+                label: 'Eficiencia de Titulación',
+                data: titulaciones.map((e) => e.titulacion),
+                backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
+                borderColor: 'rgb(255, 120, 90)',
+                borderWidth: 2
+            });
+        }
+        
+    
+        return {
+            labels: titulaciones.map((e) => e.carrera),
+            datasets: datasets
+        };
+    };
 
     const handleTable = async() => {
         setIsLoading(true);
@@ -36,6 +87,7 @@ const ReportesTitulacion = () => {
                 setHeading(headers);
                 const reporte = buildTablaReportes(tabla.data);
                 setData(reporte);
+                setChartData(prepareChartData(reporte, numSemestres));
             } catch (error) {
                 setHeading([[],[]]);
                 setData([]);
@@ -65,14 +117,18 @@ const ReportesTitulacion = () => {
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Titulacion', cohorte, numSemestres, tipoAlumno);
             }
+            notifications.show({
+                message: 'La descarga de tu documento ha comenzado.',
+                color: 'teal',
+                icon: <Download size={20} />,
+              });
         } catch (e) {
             notifications.show({
                 message: 'Lo sentimos, hubo un problema al generar su documento',
                 color: 'red',
                 icon: <X />,
-              });
+                });
         }
-
     };
 
     return(
@@ -103,6 +159,52 @@ const ReportesTitulacion = () => {
                     </Group>
                 </fieldset>
                 <Tabla colors="tabla-naranja" tripleHeader  headers={heading} content={data} />
+                        
+                {chartData && (
+                                    <div style={{
+                                        width: '90%',
+                                        height: '600px',
+                                        margin: '2rem auto'
+                                    }}>
+                                        <DataChart 
+                                            ref={chartRef}
+                                            data={chartData}
+                                            type={chartType}
+                                            title={`Eficiencia de Titulación - Cohorte ${cohorte}`}
+                                            options={{
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: {
+                                                        position: 'top',
+                                                    },
+                                                    tooltip: {
+                                                        callbacks: {
+                                                            label: function(context) {
+                                                                return `${context.dataset.label}: ${context.raw}%`;
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Porcentaje de Titulación (%)'
+                                                        }
+                                                    },
+                                                    x: {
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Carrera'
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                )}
             </Flex>
         </div>
     );
