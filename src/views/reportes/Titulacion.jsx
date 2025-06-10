@@ -37,11 +37,19 @@ const ReportesTitulacion = () => {
         const datasets = [];
         const titulaciones = tableData.map((row) => ({
             carrera: row[0],
-            titulacion: parseFloat(row[row.length - 1]) || 0
+            titulacion: parseFloat(row[row.length - 2]) || 0
+        }));
+        const indice = tableData.map((row) => ({
+            carrera: row[0],
+            indice: parseFloat(row[row.length - 1]) || 0
         }));
         const titulaciones2 = tableData.map((row) => ({
             carrera: row[0],
-            titulacion: parseFloat(row[row.length - 4]) || 0
+            titulacion: parseFloat(row[row.length - 6]) || 0
+        }));
+        const indice2 = tableData.map((row) => ({
+            carrera: row[0],
+            indice: parseFloat(row[row.length - 5]) || 0
         }));
         if(numSemestres > 12){
             datasets.push({
@@ -49,6 +57,13 @@ const ReportesTitulacion = () => {
                 data: titulaciones2.map((e) => e.titulacion),
                 backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
                 borderColor: 'rgb(255, 120, 90)',
+                borderWidth: 2
+            });
+            datasets.push({
+                label: 'Indice de Titulación a 12 semestres',
+                data: indice2.map((e) => e.indice),
+                backgroundColor: 'rgba(21, 246, 130, 0.5)', // Color toronja
+                borderColor: 'rgb(0, 251, 33)',
                 borderWidth: 2
             });
 
@@ -60,6 +75,13 @@ const ReportesTitulacion = () => {
                 borderColor: 'rgb(90, 120, 255)',
                 borderWidth: 2
             });
+            datasets.push({
+                label: `Eficiencia de Titulación a ${numSemestres} semestres`,
+                data: indice.map((e) => e.indice),
+                backgroundColor: 'rgba(243, 16, 255, 0.5)', // Color azul
+                borderColor: 'rgb(255, 166, 255)',
+                borderWidth: 2
+            });
         } else{
             // La eficiencia de egreso es la ultima columna de la tabla
             datasets.push({
@@ -67,6 +89,13 @@ const ReportesTitulacion = () => {
                 data: titulaciones.map((e) => e.titulacion),
                 backgroundColor: 'rgba(255, 120, 90, 0.5)', // Color toronja
                 borderColor: 'rgb(255, 120, 90)',
+                borderWidth: 2
+            });
+            datasets.push({
+                label: 'Indice de Titulación',
+                data: indice.map((e) => e.indice),
+                backgroundColor: 'rgba(90, 120, 255, 0.5)', // Color azul
+                borderColor: 'rgb(90, 120, 255)',
                 borderWidth: 2
             });
         }

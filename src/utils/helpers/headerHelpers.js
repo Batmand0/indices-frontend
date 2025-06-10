@@ -101,19 +101,25 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
     // Agregamos las columnas finales para eficiencia
     firstRow.push('');
     firstRow.push(`Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`);
-    secondRow.push("Total",' ');
-    thirdRow.push(' ', ' ');
+    if(tipo === 1) firstRow.push('Indice de titulación');
+    secondRow.push("Total",' ', ' '); 
+    thirdRow.push(' ', ' ', ' ');
 
     // Si son más de 12 semestres, agregamos columnas adicionales
     if (numSemestres > 12) {
         firstRow.push(
             `Año  de ${tipo === 1 ? 'titulación' : 'egreso'}`, '', // Columnas para año adicional
-            `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}` // Columna para eficiencia adicional
+            `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`
         );
-        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)");
-        secondRow.push('');
-        thirdRow.push(13);
-        thirdRow.push('');
+        // Agregar espacios para mantener alineación
+        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)", '', 'Total');
+        thirdRow.push(numSemestres, '', ' ');
+
+        if (tipo === 1) {
+            firstRow.push('Indice de Titulación');
+            secondRow.push(''); // Agregar espacio para mantener alineación
+            thirdRow.push('');  // Agregar espacio para mantener alineación
+        }
     }
 
     // Agregamos las tres filas a la tabla en orden
