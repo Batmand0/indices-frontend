@@ -3,8 +3,9 @@ import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
 import dropDownData from 'src/mockup/dropDownData';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useInputState } from '@mantine/hooks';
+import "./Indices.css";
 import { getIndicesHeaders } from 'src/utils/helpers/headerHelpers';
 import { Download, Printer, X } from 'tabler-icons-react';
 import { buildTablaIndices, buildTablaIndicesGeneracional } from 'src/utils/helpers/indicesHelpers';
@@ -27,6 +28,8 @@ const IndiceEgreso = () => {
     const [exportar, setExportar] = useInputState('');
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
+    const chartRef = useRef(null);
+
 
     // Nuevo estado para modo generacional
     const [modoGeneracional, setModoGeneracional] = useState(false);
@@ -43,45 +46,6 @@ const IndiceEgreso = () => {
         setCarreras(c);
     };
 
-    const prepareChartData = (tableData, headers) => {
-        if (modoGeneracional) {
-            const chartData = {
-                labels: tableData.map((row) => row[0]), // Generaciones
-                datasets: [
-                    {
-                        label: 'Tasa de Egreso',
-                        data: tableData.map((row) => parseFloat(row[3])), // Cambiado de [1] a [3]
-                        borderColor: 'rgb(255, 170, 90)',
-                        backgroundColor: 'rgb(250, 199, 152)'
-                    }
-                ]
-            };
-            return chartData;
-        } else {
-            // Añadir log para debug
-            console.log('Datos de tabla:', tableData);
-            const chartData = {
-                labels: tableData.map((row) => row[1]), // Periodos
-                datasets: [
-                    {
-                        label: 'Tasa de Egreso',
-                        data: tableData.map((row) => {
-                            // Añadir validación
-                            if (!row[6]) {
-                                console.error('Dato inválido:', row);
-                                return 0;
-                            }
-                            return parseFloat(row[6].replace('%', ''));
-                        }),
-                        borderColor: 'rgb(255, 170, 90)',
-                        backgroundColor: 'rgb(250, 199, 152)'
-                    }
-                ]
-            };
-            return chartData;
-        }
-    };
-
     // Cargar carreras cuando el componente se monta
     useEffect(() => {
         if (modoGeneracional) {
@@ -92,6 +56,79 @@ const IndiceEgreso = () => {
         }
         fetchCarreras();
     }, [modoGeneracional]);
+
+    
+    const prepareChartData = (tableData, headers, chartType) => {
+        // Extraer periodos únicos
+        const periodos = new Set();
+        tableData.forEach((row) => {
+            const periodo = row[1];
+            periodos.add(periodo);
+        });
+
+        if (modoGeneracional) {
+            return {
+                labels: tableData.map((row) => row[0]), // Generaciones
+                datasets: [
+                    {
+                        label: 'Tasa de Eficiencia de Egreso',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)'
+                    }
+                ]
+            };
+        } else {
+            // Para modo no generacional
+            const datasets = [];
+            const periodosList = Array.from(periodos);
+            
+            // Crear un dataset por cada tipo de dato (Hombres, Mujeres, Total)
+            const datosHombres = tableData.map((row) => parseFloat(row[4]));
+            const datosMujeres = tableData.map((row) => parseFloat(row[5]));
+            const datosTotal = datosHombres.map((h, idx) => h + datosMujeres[idx]);
+
+            if (chartType === 'bar') {
+                datasets.push({
+                    label: 'Hombres Egresados',
+                    data: datosHombres,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: 'Mujeres Egresadas',
+                    data: datosMujeres,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: 'Total de Egresados',
+                    data: datosTotal,
+                    backgroundColor: 'rgba(255, 120, 90, 0.5)',
+                    borderColor: 'rgb(255, 120, 90)',
+                    borderWidth: 1
+                });
+            } else {
+                // Para gráfica de línea
+                datasets.push({
+                    label: 'Tasa de Eficiencia de Egreso',
+                    data: tableData.map((row) => parseFloat(row[6].replace('%', ''))),
+                    borderColor: 'rgb(255, 120, 90)',
+                    backgroundColor: 'rgb(253, 167, 148)',
+                    tension: 0.1
+                });
+            }
+
+            return {
+                labels: periodosList,
+                datasets: datasets
+            };
+        }
+    };
 
     // Manejador para generar la tabla con los datos filtrados
     const handleTable = async() => {
@@ -116,7 +153,7 @@ const IndiceEgreso = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('egreso', tabla.data, numSemestres);
                     setData(datos);
-                    setChartData(prepareChartData(datos, headers));
+                    setChartData(prepareChartData(datos, headers, chartType));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
@@ -129,7 +166,7 @@ const IndiceEgreso = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('egreso', tabla.data, numSemestres);
                     setData(datos);
-                    setChartData(prepareChartData(datos, headers));
+                    setChartData(prepareChartData(datos, headers, chartType));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -151,7 +188,18 @@ const IndiceEgreso = () => {
         const tipoAlumno = examenYConv && trasladoYEquiv ? 1 : examenYConv ? 2 : 3;
         try {
             if (exportar === 'PDF') {
-                await generatePDF('Egreso', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera);
+                await generatePDF(
+                    'Egreso', 
+                    cohorte, 
+                    numSemestres, 
+                    heading, 
+                    data, 
+                    false, 
+                    examenYConv, 
+                    trasladoYEquiv, 
+                    carrera,
+                    chartRef // Pasar la referencia de la gráfica
+                );
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Indice Egreso', cohorte, numSemestres, tipoAlumno);
             }
@@ -168,6 +216,12 @@ const IndiceEgreso = () => {
                 });
         }
     };
+
+    useEffect(() => {
+        if (data.length > 0) {
+            setChartData(prepareChartData(data, heading, chartType));
+        }
+    }, [chartType]);
 
     return(
         <div style={{
@@ -209,13 +263,44 @@ const IndiceEgreso = () => {
                         height: '600px',
                         margin: '2rem auto'
                     }}>
-                    <DataChart 
-                        data={chartData}
-                        type={chartType}
-                        title={modoGeneracional ? "Análisis de Egreso por Generación" : "Análisis de Egreso por Periodo"}
-                        onTypeChange={setChartType}
-                    />
-                </div>
+                        <DataChart 
+                            data={chartData}
+                            type={chartType}
+                            title={modoGeneracional ? 
+                                "Análisis de Egreso por Generación" : 
+                                chartType === 'bar' ? 
+                                    "Cantidad de Estudiantes por Periodo" : 
+                                    "Tasa de Egreso por Periodo"
+                            }
+                            onTypeChange={setChartType}
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'right',
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: chartType === 'bar' ? 
+                                                'Número de Estudiantes' : 
+                                                'Tasa de Egreso (%)'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Periodo'
+                                        }
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
                 )}
             </Flex>
         </div>

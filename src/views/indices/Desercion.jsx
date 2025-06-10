@@ -5,6 +5,7 @@ import Dropdown from 'src/components/Dropdown';
 import { useEffect, useState } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
+import "./Indices.css";
 import { getIndicesHeaders } from 'src/utils/helpers/headerHelpers';
 import { Download, Printer, X } from 'tabler-icons-react';
 import { buildTablaIndices, buildTablaIndicesGeneracional } from 'src/utils/helpers/indicesHelpers';
@@ -63,7 +64,14 @@ const IndiceDesercion = () => {
         fetchCarreras();
     }, [modoGeneracional]);
 
-    const prepareChartData = (tableData) => {
+    const prepareChartData = (tableData, headers, chartType) => {
+        // Extraer periodos únicos
+        const periodos = new Set();
+        tableData.forEach((row) => {
+            const periodo = row[1];
+            periodos.add(periodo);
+        });
+
         if (modoGeneracional) {
             return {
                 labels: tableData.map((row) => row[0]), // Generaciones
@@ -71,22 +79,59 @@ const IndiceDesercion = () => {
                     {
                         label: 'Tasa de Deserción',
                         data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
-                        borderColor: 'rgb(255, 170, 90)',
-                        backgroundColor: 'rgb(250, 199, 152)'
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)'
                     }
                 ]
             };
         } else {
+            // Para modo no generacional
+            const datasets = [];
+            const periodosList = Array.from(periodos);
+            
+            // Crear un dataset por cada tipo de dato (Hombres, Mujeres, Total)
+            const datosHombres = tableData.map((row) => parseFloat(row[6]));
+            const datosMujeres = tableData.map((row) => parseFloat(row[7]));
+            const datosTotal = datosHombres.map((h, idx) => h + datosMujeres[idx]);
+
+            if (chartType === 'bar') {
+                datasets.push({
+                    label: 'Hombres',
+                    data: datosHombres,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: 'Mujeres',
+                    data: datosMujeres,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: 'Total',
+                    data: datosTotal,
+                    backgroundColor: 'rgba(255, 120, 90, 0.5)',
+                    borderColor: 'rgb(255, 120, 90)',
+                    borderWidth: 1
+                });
+            } else {
+                // Para gráfica de línea
+                datasets.push({
+                    label: 'Tasa de Deserción',
+                    data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
+                    borderColor: 'rgb(255, 120, 90)',
+                    backgroundColor: 'rgb(253, 167, 148)',
+                    tension: 0.1
+                });
+            }
+
             return {
-                labels: tableData.map((row) => row[1]), // Periodos
-                datasets: [
-                    {
-                        label: 'Tasa de Deserción',
-                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
-                        borderColor: 'rgb(255, 170, 90)',
-                        backgroundColor: 'rgb(250, 199, 152)'
-                    }
-                ]
+                labels: periodosList,
+                datasets: datasets
             };
         }
     };
@@ -171,6 +216,12 @@ const IndiceDesercion = () => {
             });
         }
     };
+
+    useEffect(() => {
+        if (data.length > 0) {
+            setChartData(prepareChartData(data, heading, chartType));
+        }
+    }, [chartType]);
 
     return(
         <div style={{

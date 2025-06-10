@@ -54,7 +54,14 @@ const IndiceTitulacion = () => {
         fetchCarreras();
     }, [modoGeneracional]);
 
-    const prepareChartData = (tableData, headers) => {
+    const prepareChartData = (tableData, headers, chartType) => {
+        // Extraer periodos únicos
+        const periodos = new Set();
+        tableData.forEach((row) => {
+            const periodo = row[1];
+            periodos.add(periodo);
+        });
+
         if (modoGeneracional) {
             return {
                 labels: tableData.map((row) => row[0]), // Generaciones
@@ -68,20 +75,56 @@ const IndiceTitulacion = () => {
                 ]
             };
         } else {
+            // Para modo no generacional
+            const datasets = [];
+            const periodosList = Array.from(periodos);
+            
+            // Crear un dataset por cada tipo de dato (Hombres, Mujeres, Total)
+            const datosHombres = tableData.map((row) => parseFloat(row[6]));
+            const datosMujeres = tableData.map((row) => parseFloat(row[7]));
+            const datosTotal = datosHombres.map((h, idx) => h + datosMujeres[idx]);
+
+            if (chartType === 'bar') {
+                datasets.push({
+                    label: 'Hombres',
+                    data: datosHombres,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgb(54, 162, 235)',
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: 'Mujeres',
+                    data: datosMujeres,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1
+                });
+
+                datasets.push({
+                    label: 'Total',
+                    data: datosTotal,
+                    backgroundColor: 'rgba(255, 120, 90, 0.5)',
+                    borderColor: 'rgb(255, 120, 90)',
+                    borderWidth: 1
+                });
+            } else {
+                // Para gráfica de línea
+                datasets.push({
+                    label: 'Tasa de Titulación',
+                    data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
+                    borderColor: 'rgb(255, 120, 90)',
+                    backgroundColor: 'rgb(253, 167, 148)',
+                    tension: 0.1
+                });
+            }
+
             return {
-                labels: tableData.map((row) => row[1]), // Periodos
-                datasets: [
-                    {
-                        label: 'Tasa de Titulación',
-                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))), // Tasa de retención
-                        borderColor: 'rgb(255, 120, 90)',
-                        backgroundColor: 'rgb(253, 167, 148)'
-                    }
-                ]
+                labels: periodosList,
+                datasets: datasets
             };
         }
     };
-
     // Manejador para generar la tabla con los datos filtrados
     const handleTable = async() => {
         setIsLoading(true);
@@ -140,10 +183,20 @@ const IndiceTitulacion = () => {
         const tipoAlumno = examenYConv && trasladoYEquiv ? 1 : examenYConv ? 2 : 3;
         try {
             if (exportar === 'PDF') {
-                await generatePDF('Titulación', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera, chartRef);
-                // Pasar la referencia de la gráfica);
+                await generatePDF(
+                    'Titulación', 
+                    cohorte, 
+                    numSemestres, 
+                    heading, 
+                    data, 
+                    false, 
+                    examenYConv, 
+                    trasladoYEquiv, 
+                    carrera,
+                    chartRef // Pasar la referencia de la gráfica
+                );
             } else if (exportar === 'Excel') {
-                await generateExcel(heading, data, 'Indice Titulacion', cohorte, numSemestres, tipoAlumno);
+                await generateExcel(heading, data, 'Indice Titulación', cohorte, numSemestres, tipoAlumno);
             }
             notifications.show({
                 message: 'La descarga de tu documento ha comenzado.',
@@ -158,6 +211,12 @@ const IndiceTitulacion = () => {
                 });
         }
     };
+
+    useEffect(() => {
+        if (data.length > 0) {
+            setChartData(prepareChartData(data, heading, chartType));
+        }
+    }, [chartType]);
 
     return(
         <div style={{
