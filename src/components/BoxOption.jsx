@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "tabler-icons-react";
 import './BoxOption.css';
 
-function BoxOption({color, label, route, icon}) {
+function BoxOption({color, label, route, icon, description}) {
     const navigate = useNavigate();
     return (
         <Group
@@ -25,7 +25,14 @@ function BoxOption({color, label, route, icon}) {
                     className="box-option-icon"
                 />
             )}
-            <Text fw={600} className="box-option-text">{ label }</Text>
+            <div>
+                <Text fw={600} className="box-option-text">{ label }</Text>
+                {description && (
+                    <Text size="sm" color="dimmed" mt={5}>
+                        { description }
+                    </Text>
+                )}
+            </div>
             <ActionIcon 
                 color={color} 
                 radius="xl" 
@@ -42,6 +49,7 @@ BoxOption.propTypes = {
     color: PropTypes.string,
     label: PropTypes.string,
     route: PropTypes.string,
-    icon: PropTypes.string
+    icon: PropTypes.string,
+    description: PropTypes.string
 };
 export default BoxOption;

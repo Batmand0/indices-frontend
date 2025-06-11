@@ -4,7 +4,7 @@
     gap: 15px;
     background-color: #F0F0F0;
     padding: 15px 10px;
-    min-width: 250px;
+    min-width: 300px;
     justify-content: center;
     align-content: center;
     align-items: center;
@@ -21,6 +21,7 @@
 
 .box-option-text {
     transition: transform 0.3s ease;
+    margin-bottom: 4px;
 }
 
 .box-option:hover .box-option-text {
@@ -42,4 +43,9 @@
 
 .box-option:hover .box-option-arrow {
     transform: rotate(90deg);
+}
+
+.box-option-description {
+    max-width: 250px;
+    line-height: 1.4;
 }

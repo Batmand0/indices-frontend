@@ -12,9 +12,21 @@ const SeleccionTablas = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Tablas" title="" route="/" />
-            <Group mt={15}>
-                <BoxOption color="toronja" route="/tablas/poblacion" label="Tablas de Población" icon="tablas.svg"/>
-                <BoxOption color="naranja" route="/tablas/crecimiento" label="Tablas de Crecimiento" icon="indices.svg" />
+            <Group mt={15} gap="md" position="center" style={{ flexWrap: 'wrap' }}>
+                <BoxOption 
+                    color="toronja" 
+                    route="/tablas/poblacion" 
+                    label="Tablas de Población" 
+                    icon="tablas.svg"
+                    description="Visualiza y analiza la distribución de la población estudiantil por carrera y período"
+                />
+                <BoxOption 
+                    color="naranja" 
+                    route="/tablas/crecimiento" 
+                    label="Tablas de Crecimiento" 
+                    icon="indices.svg"
+                    description="Examina las tendencias de crecimiento y evolución de la matrícula estudiantil"
+                />
             </Group>
         </div>
     );

@@ -12,10 +12,28 @@ const SeleccionReportes = () => {
             padding: '3vw',
         }}>
             <Header color="toronja" section="Reportes" title="" route="/" />
-            <Group mt={15}>
-                <BoxOption color="naranja" route="/reportes/nuevo-ingreso" label="Nuevo Ingreso" icon="indices.svg" />
-                <BoxOption color="toronja" route="/reportes/egreso" label="Egresados" icon="alumnos.svg" />
-                <BoxOption color="naranja" route="/reportes/titulacion" label="Titulados" icon="cedulas.svg"/>
+            <Group mt={15} position="center" gap="md" style={{ flexWrap: 'wrap' }}>
+                <BoxOption 
+                    color="naranja" 
+                    route="/reportes/nuevo-ingreso" 
+                    label="Nuevo Ingreso" 
+                    icon="indices.svg"
+                    description="Analiza los datos de estudiantes de primer ingreso y su distribución por carrera" 
+                />
+                <BoxOption 
+                    color="toronja" 
+                    route="/reportes/egreso" 
+                    label="Egresados" 
+                    icon="alumnos.svg"
+                    description="Visualiza las estadísticas de estudiantes que han completado sus créditos académicos"
+                />
+                <BoxOption 
+                    color="naranja" 
+                    route="/reportes/titulacion" 
+                    label="Titulados" 
+                    icon="cedulas.svg"
+                    description="Consulta la información sobre estudiantes que han obtenido su título profesional"
+                />
 
             </Group>
         </div>
