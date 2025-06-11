@@ -21,7 +21,7 @@ const Principal = () => {
                 <img className="logos" src="/img/logo/Logo-TecNM.png" alt="Logo del TecNM" />
                 <img  className="logos" src="/img/logo/sep_logo.png" alt="Logo de la secretaria de educacion" />
             </Group>
-            <Title order={2} mb={ 16 } align="center">Bienvenido, {toTitle(user().first_name)}</Title>
+            <Title order={2} mb={ 16 } align="center">Bienvenido a Indices, {toTitle(user().first_name)}</Title>
             <Group position="center" align="center" style={{width: '100vw'}}>
                 <div className="block" onClick={() => {
                                 navigate('/tablas');
