@@ -264,6 +264,7 @@ const IndiceEgreso = () => {
                         margin: '2rem auto'
                     }}>
                         <DataChart 
+                            ref={chartRef}
                             data={chartData}
                             type={chartType}
                             title={modoGeneracional ? 

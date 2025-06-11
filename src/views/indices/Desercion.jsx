@@ -2,7 +2,7 @@ import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
 import "./Indices.css";
@@ -31,6 +31,7 @@ const IndiceDesercion = () => {
     const [carrera, setCarrera] = useInputState(''); // Programa educativo seleccionado
     const [numSemestres, setNumSemestre] = useInputState(0); // Número de semestres a calcular
     const [exportar, setExportar] = useInputState(''); // Formato de exportación (PDF/Excel)
+    const chartRef = useRef(null); // Referencia para el gráfico
     
     // Estados para tipos de alumnos a incluir
     const [examenYConv, setExamenYConv] = useState(true); // Alumnos por examen y convalidación
@@ -197,7 +198,7 @@ const IndiceDesercion = () => {
         try {
             // Exporta según el formato seleccionado
             if (exportar === 'PDF') {
-                await generatePDF('Deserción', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera);
+                await generatePDF('Deserción', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, carrera, chartRef);
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Indice Desercion', cohorte, numSemestres, tipoAlumno);
             }
@@ -282,6 +283,7 @@ const IndiceDesercion = () => {
                         margin: '2rem auto'
                     }}>
                     <DataChart 
+                        ref={chartRef}
                         data={chartData}
                         type={chartType}
                         title={modoGeneracional ? "Análisis de Deserción por Generación" : "Análisis de Deserción por Periodo"}

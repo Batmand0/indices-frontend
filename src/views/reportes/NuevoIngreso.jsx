@@ -100,7 +100,7 @@ const ReportesNuevoIngreso = () => {
         const tipoAlumno = examenYConv && trasladoYEquiv ? 1 : examenYConv ? 2 : 3;
         try {
             if (exportar === 'PDF') {
-                await generatePDF('Nuevo Ingreso', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv);
+                await generatePDF('Nuevo Ingreso', cohorte, numSemestres, heading, data, false, examenYConv, trasladoYEquiv, chartRef);
             } else if (exportar === 'Excel') {
                 await generateExcel(heading, data, 'Nuevo Ingreso', cohorte, numSemestres, tipoAlumno);
             }
