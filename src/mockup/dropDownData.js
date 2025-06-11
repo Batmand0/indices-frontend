@@ -70,6 +70,11 @@ const getCohortes = () => {
 };
 
 const numSemestres = [
+    {'value':'4', 'label':'4 semestres'},
+    {'value':'5', 'label':'5 semestres'},
+    {'value':'6', 'label':'6 semestres'},
+    {'value':'7', 'label':'7 semestres'},
+    {'value':'8', 'label':'8 semestres'},
     {'value':'9', 'label':'9 semestres'},
     {'value':'10','label':'10 semestres'},
     {'value':'11','label':'11 semestres'},
