@@ -69,12 +69,14 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
 
     // Segunda fila: contendrá los periodos
     // Espacios vacíos que se alinean con las columnas de la primera fila
-    const secondRow = [' ', ' ', ' '];
+    const secondRow = [' ', ' '];
+    if (tipo === 1) secondRow.push(' ');
 
     // Tercera fila: contendrá los números de semestre
     // Espacios vacíos que se alinean con las columnas de la primera fila
-    const thirdRow = [' ', ' ', ' '];
-
+    const thirdRow = [' ', ' '];
+    if (tipo === 1) thirdRow.push(' ');
+    
     // Separamos el periodo inicial (ejemplo: "2020-1" -> ["2020", "1"])
     let periodo = cohorte.split("-");
 
@@ -112,13 +114,14 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
             `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`
         );
         // Agregar espacios para mantener alineación
-        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)", '', 'Total');
-        thirdRow.push(numSemestres, '', ' ');
+        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)", '');
+        thirdRow.push(numSemestres, '');
 
         if (tipo === 1) {
+            // Agregar espacios para mantener alineación
+            secondRow.push('.', '');
+            thirdRow.push('', '');
             firstRow.push('Indice de Titulación');
-            secondRow.push(''); // Agregar espacio para mantener alineación
-            thirdRow.push('');  // Agregar espacio para mantener alineación
         }
     }
 

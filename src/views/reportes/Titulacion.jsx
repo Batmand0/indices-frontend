@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Group, Loader } from '@mantine/core';
+import { Button, Checkbox, Flex, Group, Loader, Menu, UnstyledButton, Text } from '@mantine/core';
 import Header from 'src/components/header';
 import Tabla from 'src/components/Tabla';
 import Dropdown from 'src/components/Dropdown';
@@ -7,12 +7,12 @@ import { useInputState } from '@mantine/hooks';
 import dropDownData from 'src/mockup/dropDownData';
 import "src/views/indices/Indices.css";
 import { getReportesHeaders } from 'src/utils/helpers/headerHelpers';
-import { Download, Printer, X } from 'tabler-icons-react';
+import { Download, Filter, Printer, X } from 'tabler-icons-react';
 import { generatePDF } from 'src/utils/helpers/export/pdfHelpers';
 import { generateExcel } from 'src/utils/helpers/export/excelHelpers';
 import { getReportesEgresoTitulacion } from 'src/routes/api/controllers/reportesController';
 import { notifications } from '@mantine/notifications';
-import { buildTablaReportes } from 'src/utils/helpers/reportesHelpers';
+import { buildTablaReportesTitulacion } from 'src/utils/helpers/reportesHelpers';
 import DataChart from 'src/components/charts/DataChart';
 
 const ReportesTitulacion = () => {
@@ -31,8 +31,15 @@ const ReportesTitulacion = () => {
     const [chartType] = useState('line'); // line chart es mejor para ver eficiencia
     const chartRef = useRef(null);
 
+    // Variables para manejar los filtros de carrera
+    const [selectedCarreras, setSelectedCarreras] = useState([]);
+    const [availableCarreras, setAvailableCarreras] = useState([]);
+    const [originalData, setOriginalData] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
+    const [menuOpened, setMenuOpened] = useState(false);
+
     const prepareChartData = (tableData, numSemestres) => {
-    
+
         // La eficiencia está en la última columna de cada fila
         const datasets = [];
         const titulaciones = tableData.map((row) => ({
@@ -114,9 +121,28 @@ const ReportesTitulacion = () => {
             try {
                 const headers = getReportesHeaders(1, cohorte, numSemestres);
                 setHeading(headers);
-                const reporte = buildTablaReportes(tabla.data);
+                const reporte = buildTablaReportesTitulacion(tabla.data);
                 setData(reporte);
+                setOriginalData(reporte);
                 setChartData(prepareChartData(reporte, numSemestres));
+
+                // Obtener todas las carreras disponibles
+                const carreras = reporte
+                    .filter((row) => row[0] !== 'Total')
+                    .map((row) => ({
+                        value: row[0],
+                        label: row[0],
+                        isTotal: false
+                    }));
+
+                setAvailableCarreras(carreras);
+                // Seleccionar todas las carreras por defecto
+                const allCarreras = carreras.map((c) => c.value);
+                setSelectedCarreras(allCarreras);
+                
+                // Actualizar la gráfica con todas las carreras
+                setChartData(prepareChartData(reporte, headers, allCarreras));
+                setShowFilters(true);
             } catch (error) {
                 setHeading([[],[]]);
                 setData([]);
@@ -160,6 +186,23 @@ const ReportesTitulacion = () => {
         }
     };
 
+    const handleCarreraSelection = (carrera) => {
+        const newSelected = selectedCarreras.includes(carrera.value)
+            ? selectedCarreras.filter((c) => c !== carrera.value)
+            : [...selectedCarreras, carrera.value];
+        
+        setSelectedCarreras(newSelected);
+        
+        const filteredData = newSelected.length === 0
+            ? originalData
+            : originalData.filter((row) => 
+                newSelected.includes(row[0]) || (row[0] === 'Total' && newSelected.includes('Total'))
+            );
+        
+        setData(filteredData);
+        setChartData(prepareChartData(filteredData, newSelected));
+    };
+
     return(
         <div style={{
             width: '100vw',
@@ -187,6 +230,62 @@ const ReportesTitulacion = () => {
                         <Button onClick={handleTable} disabled={(!cohorte || !numSemestres || !(examenYConv || trasladoYEquiv)) && !isLoading} color='negro'>{isLoading ? <Loader size='sm'  color='#FFFFFF' /> : 'Filtrar'}</Button>
                     </Group>
                 </fieldset>
+                {showFilters && (
+                    <Flex align="end" justify="flex-end" mb={20} gap={10}>
+                        <Menu 
+                            shadow="md" 
+                            width={200}
+                            opened={menuOpened}
+                            onChange={setMenuOpened}
+                            closeOnItemClick={false}
+                        >
+                            <Menu.Target>
+                                <UnstyledButton 
+                                    sx={(theme) => ({
+                                        padding: '8px 12px',
+                                        borderRadius: theme.radius.sm,
+                                        color: theme.colors.gray[7],
+                                        '&:hover': {
+                                            backgroundColor: theme.colors.gray[0],
+                                        },
+                                    })}
+                                >
+                                    <Flex align="center" gap={8}>
+                                        <Filter size={16} />
+                                        <Text size="sm">Filtrar Carreras</Text>
+                                    </Flex>
+                                </UnstyledButton>
+                            </Menu.Target>
+                
+                            <Menu.Dropdown>
+                                {availableCarreras.map((carrera) => (
+                                    <Menu.Item 
+                                        key={carrera.value}
+                                        onClick={() => handleCarreraSelection(carrera)}
+                                    >
+                                        <Flex align="center" gap={8}>
+                                            {selectedCarreras.includes(carrera.value) ? '✓' : ' '}
+                                            <Text>{carrera.label}</Text>
+                                        </Flex>
+                                    </Menu.Item>
+                                ))}
+                            </Menu.Dropdown>
+                        </Menu>
+                        <Button 
+                            variant="subtle" 
+                            size="sm"
+                            onClick={() => {
+                                const allCarreras = availableCarreras.map((c) => c.value);
+                                setSelectedCarreras(allCarreras);
+                                setData(originalData);
+                                setChartData(prepareChartData(originalData, allCarreras));
+                            }}
+                            mr={10}
+                        >
+                            Limpiar filtros
+                        </Button>
+                    </Flex>
+                )}
                 <Tabla colors="tabla-naranja" tripleHeader  headers={heading} content={data} />
                         
                 {chartData && (
