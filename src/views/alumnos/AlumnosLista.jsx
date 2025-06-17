@@ -1,5 +1,5 @@
 import "src/views/indices/Indices.css";
-import { Button, Checkbox, Flex, Group, Loader, Pagination } from "@mantine/core";
+import { Button, Checkbox, Flex, Group, Loader, Pagination, Select } from "@mantine/core";
 import Header from "src/components/header";
 import Dropdown from "src/components/Dropdown";
 import Tabla from "src/components/Tabla";
@@ -34,6 +34,7 @@ const AlumnosLista = () => {
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [carreras, setCarreras] = useState([]);
+    const [estadoFiltro, setEstadoFiltro] = useState('todos');
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
         setCarreras(c);
@@ -50,7 +51,7 @@ const AlumnosLista = () => {
             setTableCount(res.data['count']);
             setHeading(headers);
             try {
-                const tabla = buildListaAlumnos(res.data['results'],numSemestres, cohorte);
+                const tabla = buildListaAlumnos(res.data['results'],numSemestres, cohorte, estadoFiltro);
                 if (tabla.length > 0) {
                     setData(tabla);
                     getFullTable();
@@ -125,8 +126,20 @@ const AlumnosLista = () => {
                     <legend>Filtros</legend>
                     <Group position="center" mt={0} mb={16} color='gris'>
                         { carreras.length > 0 ? <Dropdown  label="Programa educativo" color="#FFAA5A" handleChangeFn={setCarrera} data={carreras} /> : null }
-                        <Dropdown  label="Cohorte generacional" color="#FFAA5A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
-                        <Dropdown  label="Cálculo de semestres" color="#FFAA5A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
+                        <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
+                        <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
+                        <Select
+                            label="Estado del alumno"
+                            value={estadoFiltro}
+                            onChange={setEstadoFiltro}
+                            data={[
+                                { value: 'todos', label: 'Todos' },
+                                { value: 'inscritos', label: 'Inscritos' },
+                                { value: 'egresados', label: 'Egresados' },
+                                { value: 'bajas', label: 'Dados de baja' }
+                            ]}
+                            color="#FF785A"
+                        />
                         <Dropdown  label="Exportar" color="#FFAA5A" handleChangeFn={setExportar} data={[
                             {'value':'Excel','label':'Excel'},
                             {'value':'PDF','label':'PDF'},

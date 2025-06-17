@@ -1,8 +1,8 @@
 import { anioPeriodo } from './headerHelpers';
 
-export const buildListaAlumnos = (lista, semestres, cohorte) => {
+export const buildListaAlumnos = (lista, semestres, cohorte, estadoFiltro = 'todos') => {
     const tabla = [];
-
+    
     lista.forEach((fila) => {
         const row = [];
         const fecha = new Date();
@@ -17,10 +17,13 @@ export const buildListaAlumnos = (lista, semestres, cohorte) => {
         row.push(nombre, fila['no_control'], fila['plan']['carrera'], fila['curp']['genero']);
         let periodo = cohorte.split("-");
 
+        // Verificar estado en el periodo seleccionado
+        let estadoAlumno = '';
         for(let num = 0; num < semestres; num++) {
             const dato = fila['registros']['ingresos'][num];
             if(dato !== undefined){
                 if (dato['periodo'] === `${periodo[0]}${periodo[1]}`) {
+                    estadoAlumno = 'inscrito';
                     row.push(fila['plan']['carrera']);
                 } else {
                     let found = false;
@@ -47,15 +50,10 @@ export const buildListaAlumnos = (lista, semestres, cohorte) => {
                 });
                 if (!found) {
                     if (fila['registros']['egreso'][0] !== undefined) {
-                        if (Number(fila['registros']['egreso'][0]['periodo']) <= Number(`${periodo[0]}${periodo[1]}`)) {
-                            row.push('EGR');
-                        } else {
-                            if (`${periodo[0]}${periodo[1]}` >= `${periodoFinal[0]}${periodoFinal[1]}`)
-                                row.push('-');
-                            else
-                                row.push('BAJA');
-                        }
+                        estadoAlumno = 'egresado';
+                        row.push('EGR');
                     } else {
+                        estadoAlumno = 'baja';
                         if (`${periodo[0]}${periodo[1]}` >= `${periodoFinal[0]}${periodoFinal[1]}`)
                             row.push('-');
                         else
@@ -80,8 +78,18 @@ export const buildListaAlumnos = (lista, semestres, cohorte) => {
         } else {
             row.push('-');
         }
-        tabla.push(row);
-        periodo = cohorte.split("-");
+
+        // Aplicar filtro
+        const cumpleFiltro = 
+            estadoFiltro === 'todos' ||
+            (estadoFiltro === 'inscritos' && estadoAlumno === 'inscrito') ||
+            (estadoFiltro === 'egresados' && estadoAlumno === 'egresado') ||
+            (estadoFiltro === 'bajas' && estadoAlumno === 'baja');
+
+        if (cumpleFiltro) {
+            tabla.push(row);
+        }
     });
+    
     return tabla;
 };
