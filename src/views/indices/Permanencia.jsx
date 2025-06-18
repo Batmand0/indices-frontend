@@ -78,7 +78,7 @@ const IndicePermanencia = () => {
 
             if (chartType === 'bar') {
                 datasets.push({
-                    label: 'Hombres',
+                    label: 'Hombres inscritos',
                     data: datosHombres,
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgb(54, 162, 235)',
@@ -86,7 +86,7 @@ const IndicePermanencia = () => {
                 });
 
                 datasets.push({
-                    label: 'Mujeres',
+                    label: 'Mujeres inscritas',
                     data: datosMujeres,
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgb(255, 99, 132)',
@@ -94,7 +94,7 @@ const IndicePermanencia = () => {
                 });
 
                 datasets.push({
-                    label: 'Total',
+                    label: 'Total de inscritos',
                     data: datosTotal,
                     backgroundColor: 'rgba(255, 120, 90, 0.5)',
                     borderColor: 'rgb(255, 120, 90)',

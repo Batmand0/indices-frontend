@@ -97,7 +97,7 @@ const IndiceDesercion = () => {
 
             if (chartType === 'bar') {
                 datasets.push({
-                    label: 'Hombres',
+                    label: 'Hombres desertores',
                     data: datosHombres,
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgb(54, 162, 235)',
@@ -105,7 +105,7 @@ const IndiceDesercion = () => {
                 });
 
                 datasets.push({
-                    label: 'Mujeres',
+                    label: 'Mujeres desertoras',
                     data: datosMujeres,
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgb(255, 99, 132)',
@@ -113,7 +113,7 @@ const IndiceDesercion = () => {
                 });
 
                 datasets.push({
-                    label: 'Total',
+                    label: 'Total de desertores',
                     data: datosTotal,
                     backgroundColor: 'rgba(255, 120, 90, 0.5)',
                     borderColor: 'rgb(255, 120, 90)',

@@ -86,7 +86,7 @@ const IndiceTitulacion = () => {
 
             if (chartType === 'bar') {
                 datasets.push({
-                    label: 'Hombres',
+                    label: 'Hombres titulados',
                     data: datosHombres,
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgb(54, 162, 235)',
@@ -94,7 +94,7 @@ const IndiceTitulacion = () => {
                 });
 
                 datasets.push({
-                    label: 'Mujeres',
+                    label: 'Mujeres tituladas',
                     data: datosMujeres,
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgb(255, 99, 132)',
@@ -102,7 +102,7 @@ const IndiceTitulacion = () => {
                 });
 
                 datasets.push({
-                    label: 'Total',
+                    label: 'Total de titulados',
                     data: datosTotal,
                     backgroundColor: 'rgba(255, 120, 90, 0.5)',
                     borderColor: 'rgb(255, 120, 90)',
