@@ -164,7 +164,8 @@ const IndiceEgreso = () => {
                 if (tabla.status === 200) {
                     const headers = await getIndicesHeaders(4, cohorte, carrera);
                     setHeading(headers);
-                    const datos = buildTablaIndices('egreso', tabla.data, numSemestres);
+                    const datos = buildTablaIndices('egreso', tabla.data, numSemestres, carrera);
+                    console.log(`Carrera seleccionada: ${carrera}`);
                     setData(datos);
                     setChartData(prepareChartData(datos, headers, chartType));
                 } else {

@@ -43,17 +43,17 @@ export const getAllAlumnosHistorial = async(nuevoIngreso, trasladoEquiv, cohorte
     }
 };
 
-export const getFullHistorial = async(nuevoIngreso, trasladoEquiv, cohorte, semestres, carrera) => {
+export const getFullHistorial = async(nuevoIngreso, trasladoEquiv, cohorte, semestres, carrera, estadoFiltro) => {
     let res = await API.get('/alumnos/historial', {
         params: {'nuevo-ingreso': nuevoIngreso, 'traslado-equivalencia':trasladoEquiv, 'cohorte': cohorte.replace('-',''), 'semestres': semestres.toString(), 'carrera': carrera}
     });
     let data = res.data;
     console.log(data);
-    const historial = [buildListaAlumnos(data['results'], semestres, cohorte)];
+    const historial = [buildListaAlumnos(data['results'], semestres, cohorte, estadoFiltro)];
     while(data['next'] !== null){
         res = await API.get(data['next']);
         data = res.data;
-        const pagina = buildListaAlumnos(data['results'], semestres, cohorte);
+        const pagina = buildListaAlumnos(data['results'], semestres, cohorte, estadoFiltro);
         historial.push(pagina);
     }
     return historial;

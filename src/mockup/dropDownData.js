@@ -108,7 +108,7 @@ const dropDownData = {
     getListaCarrerasForUser,
     getListaPlanes,
     numSemestres,
-    semestres,
+    semestres
 };
 
 export default dropDownData;

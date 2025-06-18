@@ -84,7 +84,7 @@ const AlumnosLista = () => {
     };
 
     const getFullTable = async() => {
-        const res = await getFullHistorial(examenYConv, trasladoYEquiv,cohorte, numSemestres, carrera);
+        const res = await getFullHistorial(examenYConv, trasladoYEquiv,cohorte, numSemestres, carrera, estadoFiltro);
         setFullTable(res);
     };
 
