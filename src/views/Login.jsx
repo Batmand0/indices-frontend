@@ -36,7 +36,6 @@ const Login = () => {
 
   const handleLogin = async (values) => {
     setLoading(true);
-    console.log(import.meta.env.VITE_BACKEND_URL);
     const { error } = await login(values.username, values.password);
     if (error) {
       notifications.show({

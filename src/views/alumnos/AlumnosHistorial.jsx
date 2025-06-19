@@ -44,7 +44,6 @@ const AlumnosHistorial = () => {
     const searchAlumno = async (numControl) => {
         let alumnoData = {};
         if (numControl !== '') {
-            console.log(numControl);
             alumnoData = await getAlumnoInfo(numControl);
         } else {
             alumnoData = await getAlumnoInfo(buscar);

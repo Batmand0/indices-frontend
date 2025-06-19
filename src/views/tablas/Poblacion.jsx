@@ -73,13 +73,6 @@ const TablaPoblacion = () => {
     // Modificar la llamada a la API
     const getTable = async() => {
         try {
-            console.log('Solicitando datos con parámetros:', {
-                examenYConv, 
-                trasladoYEquiv, 
-                cohorte, 
-                numSemestres
-            });
-            
             const tabla = await getTablasPoblacion(
                 examenYConv, 
                 trasladoYEquiv, 
@@ -87,14 +80,10 @@ const TablaPoblacion = () => {
                 numSemestres
             );
             
-            console.log('Datos recibidos del backend:', tabla.data);
-            
             if (tabla?.status === 200) {
                 const table = buildTable(tabla.data);
-                console.log('Tabla construida:', table);
                 return table;
             } else {
-                console.error('Error en la respuesta:', tabla);
                 setHeading([]);
                 setData([[]]);
                 notifications.show({
@@ -105,7 +94,6 @@ const TablaPoblacion = () => {
                 return [];
             }
         } catch (error) {
-            console.error('Error en getTable:', error);
             setHeading([]);
             setData([[]]);
             notifications.show({

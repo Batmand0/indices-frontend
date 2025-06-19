@@ -48,7 +48,6 @@ export const getFullHistorial = async(nuevoIngreso, trasladoEquiv, cohorte, seme
         params: {'nuevo-ingreso': nuevoIngreso, 'traslado-equivalencia':trasladoEquiv, 'cohorte': cohorte.replace('-',''), 'semestres': semestres.toString(), 'carrera': carrera}
     });
     let data = res.data;
-    console.log(data);
     const historial = [buildListaAlumnos(data['results'], semestres, cohorte, estadoFiltro)];
     while(data['next'] !== null){
         res = await API.get(data['next']);

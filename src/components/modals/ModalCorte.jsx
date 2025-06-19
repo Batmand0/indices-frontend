@@ -8,7 +8,6 @@ import { notifications } from "@mantine/notifications";
 const ModalCorte = ({opened, close}) => {
     const handleCorte = async() => {
         const res = await realizarCorte();
-        console.log(res);
         if (res.status === 200){
             notifications.show({
                 message: 'Enhorabuena, se ha realizado el corte de manera exitosa',

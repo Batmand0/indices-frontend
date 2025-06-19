@@ -16,7 +16,6 @@ export const buildTablaReportesNuevoIngreso = (data) => {
 export const buildTablaReportesEgreso = (data) => {
     const datos= Object.entries(data);
     const tabla = [];
-    //console.log('Datos de la tabla: ', datos);
     datos.forEach((registros) => {
         // Se agrega el nombre de la carrera
         const row = [registros[0], registros[1]['poblacion_nuevo_ingreso']['hombres'], registros[1]['poblacion_nuevo_ingreso']['mujeres']];
@@ -35,14 +34,12 @@ export const buildTablaReportesEgreso = (data) => {
             tabla.push(row);
         }
     });
-    console.log(tabla);
     return tabla;
 };
 
 export const buildTablaReportesTitulacion = (data) => {
     const datos= Object.entries(data);
     const tabla = [];
-    //console.log('Datos de la tabla: ', datos);
     datos.forEach((registros) => {
         // Se agrega el nombre de la carrera
         const row = [registros[0], registros[1]['poblacion_nuevo_ingreso']['hombres'], registros[1]['poblacion_nuevo_ingreso']['mujeres']];
@@ -61,6 +58,5 @@ export const buildTablaReportesTitulacion = (data) => {
             tabla.push(row);
         }
     });
-    //console.log(tabla);
     return tabla;
 };

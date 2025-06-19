@@ -41,7 +41,6 @@ export const getIndicesDataGeneracional = async(tipo, params) => {
         });
         return response;
     } catch (err) {
-        console.error('Error en API:', err);  // Log de error
         return {
             data: null,
             status: 400,

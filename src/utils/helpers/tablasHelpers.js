@@ -38,9 +38,6 @@ export const buildTable = (data) => {
     // Obtener y ordenar periodos
     const periodos = Object.keys(normalizedData).sort((a, b) => a.localeCompare(b));
     
-    console.log('Datos normalizados:', normalizedData);
-    console.log('Periodos ordenados:', periodos);
-    
     const carrerasMap = new Map();
     
     // Inicializar el mapa con todas las carreras
