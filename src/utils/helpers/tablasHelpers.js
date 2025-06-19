@@ -65,7 +65,7 @@ export const buildTable = (data) => {
 
     // Convertir el mapa a array para la tabla
     const tableData = Array.from(carrerasMap.entries()).map(([nombre, poblaciones]) => {
-        return [nombre, '', ...poblaciones];
+        return [nombre, ...poblaciones];
     });
     
     return tableData;

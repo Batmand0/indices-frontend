@@ -128,7 +128,7 @@ const TablaPoblacion = () => {
     };
 
     const prepareChartData = (tableData, headers, selected) => {
-        const periodos = headers.slice(2);
+        const periodos = headers.slice(1);
         const carrerasMap = new Map();
         
         // Ya no necesitamos inicializar availableCarreras aquí
@@ -138,7 +138,7 @@ const TablaPoblacion = () => {
         tableData.forEach((row) => {
             const carrera = row[0];
             if (selected.includes(carrera)) {
-                carrerasMap.set(carrera, row.slice(2).map((val) => parseInt(val) || 0));
+                carrerasMap.set(carrera, row.slice(1).map((val) => parseInt(val) || 0));
             }
         });
 

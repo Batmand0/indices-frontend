@@ -31,7 +31,7 @@ export async function getIndicesHeaders(tipo, cohorte, carrera) {
 
 export function getTablasHeaders(cohorte, numSemestres) {
     const tabla = [];
-    tabla.push('Carrera', '', cohorte);
+    tabla.push('Carrera', cohorte);
     let periodo = cohorte.split("-");
     for (let i = 1; i < numSemestres; i++) {
         periodo = anioPeriodo(periodo);
