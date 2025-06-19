@@ -65,7 +65,7 @@ const IndiceDesercion = () => {
         fetchCarreras();
     }, [modoGeneracional]);
 
-    const prepareChartData = (tableData, headers, chartType) => {
+    const prepareChartData = (tableData, chartType) => {
         // Extraer periodos únicos
         const periodos = new Set();
         tableData.forEach((row) => {
@@ -220,7 +220,7 @@ const IndiceDesercion = () => {
 
     useEffect(() => {
         if (data.length > 0) {
-            setChartData(prepareChartData(data, heading, chartType));
+            setChartData(prepareChartData(data, chartType));
         }
     }, [chartType]);
 

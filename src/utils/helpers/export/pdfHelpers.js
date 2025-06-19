@@ -122,7 +122,6 @@ export async function generatePDF(titulo, cohorte, numSemestres, heading, conten
     // Si existe una referencia a la gráfica, añadirla después de la tabla
     if (chartRef && chartRef.current) {
         try {
-            console.log('Intentando capturar gráfica...');
             // Aumentar el tiempo de espera si la gráfica es compleja
             await new Promise((resolve) => setTimeout(resolve, 200));
             

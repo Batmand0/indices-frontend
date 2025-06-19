@@ -58,7 +58,7 @@ const IndiceEgreso = () => {
     }, [modoGeneracional]);
 
     
-    const prepareChartData = (tableData, headers, chartType) => {
+    const prepareChartData = (tableData, chartType) => {
         // Extraer periodos únicos
         const periodos = new Set();
         tableData.forEach((row) => {
@@ -153,7 +153,7 @@ const IndiceEgreso = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('egreso', tabla.data, numSemestres);
                     setData(datos);
-                    setChartData(prepareChartData(datos, headers, chartType));
+                    setChartData(prepareChartData(datos, chartType));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
@@ -166,7 +166,7 @@ const IndiceEgreso = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('egreso', tabla.data, numSemestres, carrera);
                     setData(datos);
-                    setChartData(prepareChartData(datos, headers, chartType));
+                    setChartData(prepareChartData(datos, chartType));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -219,7 +219,7 @@ const IndiceEgreso = () => {
 
     useEffect(() => {
         if (data.length > 0) {
-            setChartData(prepareChartData(data, heading, chartType));
+            setChartData(prepareChartData(data, chartType));
         }
     }, [chartType]);
 
@@ -240,7 +240,7 @@ const IndiceEgreso = () => {
                     <Group position="center" mt={0} mb={16} color='gris'>
                         { carreras.length > 0 ? <Dropdown  label="Programa educativo" color="#FFAA5A" handleChangeFn={setCarrera} data={carreras} /> : null }
                         <Dropdown  label={modoGeneracional ? "Cohorte inicial" : "Cohorte generacional"} color="#FFAA5A" data={dropDownData.getCohortes()} handleChangeFn={setCohorte} />
-                        <Dropdown  label="Cálculo de semestres" color="#FFAA5A" data={dropDownData.numSemestres} handleChangeFn={setNumSemestre} />
+                        <Dropdown  label="Cálculo de semestres" color="#FFAA5A" data={dropDownData.numSemestres.slice(4)} handleChangeFn={setNumSemestre} />
                         <Dropdown  label="Exportar" color="#FFAA5A" handleChangeFn={setExportar} data={[
                             {'value':'Excel','label':'Excel'},
                             {'value':'PDF','label':'PDF'},

@@ -46,7 +46,7 @@ const IndicePermanencia = () => {
         fetchCarreras();
     }, [modoGeneracional]);
 
-    const prepareChartData = (tableData, headers, chartType) => {
+    const prepareChartData = (tableData, chartType) => {
         // Extraer periodos únicos
         const periodos = new Set();
         tableData.forEach((row) => {
@@ -138,7 +138,7 @@ const IndicePermanencia = () => {
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('permanencia', tabla.data, numSemestres);
                     setData(datos);
-                    setChartData(prepareChartData(datos, headers, chartType));
+                    setChartData(prepareChartData(datos, chartType));
                 } else {
                     throw new Error('Error al obtener datos generacionales');
                 }
@@ -150,7 +150,7 @@ const IndicePermanencia = () => {
                     setHeading(headers);
                     const datos = buildTablaIndices('permanencia', tabla.data, numSemestres);
                     setData(datos);
-                    setChartData(prepareChartData(datos, headers, chartType));
+                    setChartData(prepareChartData(datos, chartType));
                 } else {
                     throw new Error('Error al obtener datos normales');
                 }
@@ -204,7 +204,7 @@ const IndicePermanencia = () => {
 
     useEffect(() => {
         if (data.length > 0) {
-            setChartData(prepareChartData(data, heading, chartType));
+            setChartData(prepareChartData(data, chartType));
         }
     }, [chartType]);
 

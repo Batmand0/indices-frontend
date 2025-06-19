@@ -3,7 +3,7 @@ import { getNombreCarrera } from "./carreraHelpers";
 export async function getIndicesHeaders(tipo, cohorte, carrera) {
     const tabla = [];
     const nombreCarrera = await getNombreCarrera(carrera);
-    tabla.push(["Indices de rendimiento escolar cohorte generacional"+' '+cohorte+' '+nombreCarrera]);
+    tabla.push(["Indices de rendimiento escolar cohorte generacional" +' '+cohorte+' '+nombreCarrera]);
     const row = ['Semestre', 'Periodo', 'Inscritos (H/M)', '', 'Egresados (H/M)', ''];
     switch(tipo) {
         case 1:

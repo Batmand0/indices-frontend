@@ -64,7 +64,7 @@ const ReportesEgreso = () => {
                 setSelectedCarreras(allCarreras);
                 
                 // Actualizar la gráfica con todas las carreras
-                setChartData(prepareChartData(reporte, headers, allCarreras));
+                setChartData(prepareChartData(reporte, allCarreras));
                 setShowFilters(true);
             } catch (error) {
                 setHeading([[],[], []]);
@@ -184,7 +184,7 @@ const ReportesEgreso = () => {
                     <legend>Filtros</legend>
                     <Group position="center" mt={0} mb={16} color='gris'>
                         <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
-                        <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
+                        <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres.slice(5)} />
                         <Dropdown  label="Exportar" color="#FF785A" handleChangeFn={setExportar} data={[
                             {'value':'Excel','label':'Excel'},
                             {'value':'PDF','label':'PDF'},
