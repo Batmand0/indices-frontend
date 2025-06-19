@@ -29,7 +29,6 @@ const EmailRestablecer = () => {
     const sendEmail = async (values) => {
         if (form.validate()) {
             const res = await sendPasswordResetEmail(values.email);
-            console.log(res.status);
             if (res.status === 200) {
                 notifications.show({
                     message: 'Se ha enviado un mensaje a la dirección de correo electrónico que ingreso, revise su bandeja de entrada y siga las instrucciones del correo.',

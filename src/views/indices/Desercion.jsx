@@ -43,7 +43,7 @@ const IndiceDesercion = () => {
     // Lista de carreras disponibles
     const [carreras, setCarreras] = useState([]);
 
-    //Graficas
+    // Graficas
     const [chartData, setChartData] = useState(null);
     const [chartType, setChartType] = useState('line');
 
@@ -209,7 +209,7 @@ const IndiceDesercion = () => {
                 icon: <Download size={20} />,
             });
         } catch (e) {
-            // Manejo de errores en la exportación
+            //Manejo de errores en la exportación
             notifications.show({
                 message: 'Lo sentimos, hubo un problema al generar su documento',
                 color: 'red',

@@ -39,7 +39,6 @@ const MiPerfil = () => {
     const fetchUserData = async() => {
         const u = await getUsuarioById(user().user_id);
         if (u.status === 200) {
-            console.log(u.data);
             form.setValues({
                 username:  u.data.username,
                 email: u.data.email,
@@ -96,11 +95,11 @@ const MiPerfil = () => {
     useEffect(() => {
         fetchCarreras();
         // fetchUserData();
-    }, []);
+    }, [fetchCarreras]);
 
     useEffect(() => {
         fetchUserData();
-    }, [onEdit]);
+    }, [onEdit, fetchUserData]);
 
     const activateEdit = () => {
         setOnEdit(true);

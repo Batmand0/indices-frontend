@@ -71,7 +71,6 @@ const CrearUsuario = () => {
     });
 
     const handleCreate = async(values) => {
-        console.log(permisos.length);
         if (!form.validate() || permisos.length === 0) {
             notifications.show({
                 message: `El usuario debe tener por lo menos una carrera asignada.`,
