@@ -126,8 +126,8 @@ const AlumnosLista = () => {
                     <legend>Filtros</legend>
                     <Group position="center" mt={0} mb={16} color='gris'>
                         { carreras.length > 0 ? <Dropdown  label="Programa educativo" color="#FFAA5A" handleChangeFn={setCarrera} data={carreras} /> : null }
-                        <Dropdown  label="Cohorte generacional" color="#FF785A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
-                        <Dropdown  label="Cálculo de semestres" color="#FF785A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
+                        <Dropdown  label="Cohorte generacional" color="#FFAA5A" handleChangeFn={setCohorte} data={dropDownData.getCohortes()} />
+                        <Dropdown  label="Cálculo de semestres" color="#FFAA5A" handleChangeFn={setNumSemestre} data={dropDownData.numSemestres} />
                         <Select
                             label="Estado del alumno"
                             value={estadoFiltro}
@@ -138,7 +138,7 @@ const AlumnosLista = () => {
                                 { value: 'egresados', label: 'Egresados' },
                                 { value: 'bajas', label: 'Dados de baja' }
                             ]}
-                            color="#FF785A"
+                            color="#FFAA5A"
                         />
                         <Dropdown  label="Exportar" color="#FFAA5A" handleChangeFn={setExportar} data={[
                             {'value':'Excel','label':'Excel'},

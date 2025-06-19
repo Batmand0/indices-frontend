@@ -1,4 +1,3 @@
-
 import { Badge, Checkbox, ScrollArea, Table } from '@mantine/core';
 import { PropTypes } from 'prop-types';
 import './Tabla.css';
@@ -36,13 +35,23 @@ function Tabla ({headers, content, colors, doubleHeader, tripleHeader, select, r
                 {tripleHeader ?
                     <thead>
                         <tr>
-                            { headers[0].filter((cell, i) => cell !== '').map((cells, index) => headers[2][headers[0].indexOf(cells)] === ' ' ? <th key={index} rowSpan="3" colSpan={getBlankSpaces2(headers[0].indexOf(cells), headers[0])}>{ cells }</th> : <th key={index} colSpan={getBlankSpaces2(headers[0].indexOf(cells), headers[0])}>{ cells }</th>)}
+                            { headers[0].filter((cell, i) => cell !== '').map((cells, index) =>
+                                headers[2][headers[0].indexOf(cells)] === ' '
+                                    ? <th key={index} rowSpan="3" colSpan={getBlankSpaces2(headers[0].indexOf(cells), headers[0])}>{ cells }</th>
+                                    : <th key={index} colSpan={getBlankSpaces2(headers[0].indexOf(cells), headers[0])}>{ cells }</th>
+                            )}
                         </tr>
                         <tr>
-                            { headers[1].filter((cell, index) => cell !== '' && cell !== ' ').map((cells, index) => headers[2][headers[1].indexOf(cells)] === ' ' ? <th style={{top: '42.7px'}} key={index} rowSpan="2" colSpan={getBlankSpaces2(headers[1].indexOf(cells), headers[1])}>{ cells }</th> : <th style={{top: '42.7px'}} colSpan={getBlankSpaces2(headers[1].indexOf(cells), headers[1])} key={index}>{ cells }</th>)}
+                            { headers[1].filter((cell, index) => cell !== '' && cell !== ' ').map((cells, index) =>
+                                headers[2][headers[1].indexOf(cells)] === ' '
+                                    ? <th key={index} rowSpan="2" colSpan={getBlankSpaces2(headers[1].indexOf(cells), headers[1])}>{ cells }</th>
+                                    : <th colSpan={getBlankSpaces2(headers[1].indexOf(cells), headers[1])} key={index}>{ cells }</th>
+                            )}
                         </tr>
                         <tr>
-                            { headers[2].filter((cell, index) => cell !== '' && cell !== ' ').map((cell, index) => <th style={{top: '85.4px'}} colSpan={getBlankSpaces2(headers[2].indexOf(cell), headers[2])} key={index}>{ cell }</th>)}
+                            { headers[2].filter((cell, index) => cell !== '' && cell !== ' ').map((cell, index) =>
+                                <th colSpan={getBlankSpaces2(headers[2].indexOf(cell), headers[2])} key={index}>{ cell }</th>
+                            )}
                         </tr>
                     </thead>
                 :

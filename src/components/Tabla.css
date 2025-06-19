@@ -45,7 +45,6 @@ thead th {
     background-clip: padding-box
 }
 
-
 .tabla tr > td {
     max-width: 150px !important;
 }
@@ -58,5 +57,26 @@ thead th {
 .doble-encabezado {
     border: none !important;
     /* border-bottom: 0.0625rem solid #dee2e6 !important; */
+}
+
+/* Primer fila de encabezado */
+.tabla thead tr:nth-child(1) th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+/* Segunda fila de encabezado */
+.tabla thead tr:nth-child(2) th {
+    position: sticky;
+    top: 42px; /* Ajusta este valor a la altura real de tu primer fila */
+    z-index: 2;
+}
+
+/* Tercera fila de encabezado */
+.tabla thead tr:nth-child(3) th {
+    position: sticky;
+    top: 84px; /* Ajusta este valor a la suma de las alturas de las dos primeras filas */
+    z-index: 1;
 }
 
