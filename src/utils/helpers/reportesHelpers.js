@@ -41,6 +41,7 @@ export const buildTablaReportesTitulacion = (data) => {
     const datos= Object.entries(data);
     const tabla = [];
     datos.forEach((registros) => {
+        console.log(registros);
         // Se agrega el nombre de la carrera
         const row = [registros[0], registros[1]['poblacion_nuevo_ingreso']['hombres'], registros[1]['poblacion_nuevo_ingreso']['mujeres']];
         const regs = Object.entries(registros[1]['registros']);
@@ -52,7 +53,7 @@ export const buildTablaReportesTitulacion = (data) => {
         });
         if (row.length > 14) {
             const inicioRegs = row.slice(0, 11);
-            inicioRegs.push(row[12], row[14], row[15], row[11], row[12], row[16], row[17]);
+            inicioRegs.push(row[13], row[14], row[15], row[11], row[12], row[16], row[17]);
             tabla.push(inicioRegs);
         } else {
             tabla.push(row);
