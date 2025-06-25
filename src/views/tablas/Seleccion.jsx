@@ -18,14 +18,14 @@ const SeleccionTablas = () => {
                     route="/tablas/poblacion" 
                     label="Tablas de Población" 
                     icon="tablas.svg"
-                    description="Visualiza y analiza la distribución de la población estudiantil por carrera y período"
+                    description="Visualiza y analiza la distribución de la población estudiantil por periodos"
                 />
                 <BoxOption 
                     color="naranja" 
                     route="/tablas/crecimiento" 
                     label="Tablas de Crecimiento" 
                     icon="indices.svg"
-                    description="Examina las tendencias de crecimiento y evolución de la matrícula estudiantil"
+                    description="Examina las tendencias de crecimiento y evolución estudiantil por carrera"
                 />
             </Group>
         </div>

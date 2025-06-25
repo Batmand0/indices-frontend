@@ -32,7 +32,7 @@ const SeleccionReportes = () => {
                     route="/reportes/titulacion" 
                     label="Titulados" 
                     icon="cedulas.svg"
-                    description="Consulta la información sobre estudiantes que han obtenido su título profesional"
+                    description="Consulta las tasas sobre estudiantes que han obtenido su título profesional por periodo"
                 />
 
             </Group>

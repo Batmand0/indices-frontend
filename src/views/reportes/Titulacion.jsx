@@ -28,7 +28,7 @@ const ReportesTitulacion = () => {
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [chartData, setChartData] = useState(null);
-    const [chartType] = useState('line'); // line chart es mejor para ver eficiencia
+    const [chartType, setChartType] = useState('line'); // line chart es mejor para ver eficiencia
     const chartRef = useRef(null);
 
     // Variables para manejar los filtros de carrera
@@ -299,6 +299,7 @@ const ReportesTitulacion = () => {
                                             data={chartData}
                                             type={chartType}
                                             title={`Eficiencia de Titulación - Cohorte ${cohorte}`}
+                                            onTypeChange={setChartType}
                                             options={{
                                                 responsive: true,
                                                 maintainAspectRatio: false,

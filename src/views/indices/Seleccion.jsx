@@ -18,21 +18,21 @@ const SeleccionIndices = () => {
                     route="/indices/permanencia" 
                     label="Indices de Permanencia" 
                     icon="registros.svg"
-                    description="Analiza la retención estudiantil y la continuidad académica por período" 
+                    description="Analiza la retención estudiantil y la continuidad académica por generación y carrera" 
                 />
                 <BoxOption 
                     color="naranja" 
                     route="/indices/egreso" 
                     label="Indices de Egreso" 
                     icon="cedulas.svg"
-                    description="Examina las tasas de finalización de créditos académicos por generación"
+                    description="Examina las tasas de eficiencia terminal por generación y carrera"
                 />
                 <BoxOption 
                     color="toronja" 
                     route="/indices/titulacion" 
                     label="Indices de Titulación" 
                     icon="alumnos.svg"
-                    description="Visualiza las estadísticas de obtención de títulos profesionales"
+                    description="Visualiza las tasas de obtención de títulos profesionales"
                 />
                 <BoxOption 
                     color="naranja" 
