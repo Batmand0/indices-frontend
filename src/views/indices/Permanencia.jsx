@@ -28,6 +28,7 @@ const IndicePermanencia = () => {
     const [examenYConv, setExamenYConv] = useState(true);
     const [trasladoYEquiv, setTrasladoYEquiv] = useState(false);
     const [modoGeneracional, setModoGeneracional] = useState(false);
+    const [verSexo, setVerSexo] = useState(false);
     const [carreras, setCarreras] = useState([]);
     const chartRef = useRef(null);
 
@@ -101,14 +102,31 @@ const IndicePermanencia = () => {
                     borderWidth: 1
                 });
             } else {
-                // Para gráfica de línea
-                datasets.push({
-                    label: 'Tasa de Retención',
-                    data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
-                    borderColor: 'rgb(255, 120, 90)',
-                    backgroundColor: 'rgb(253, 167, 148)',
-                    tension: 0.1
-                });
+                if(!verSexo) {
+                    // Para gráfica de línea
+                    datasets.push({
+                        label: 'Tasa de Retención',
+                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)',
+                        tension: 0.1
+                    });
+                } else {
+                    datasets.push({
+                        label: 'Tasa de Retención Hombres',
+                        data: tableData.map((row) => parseFloat(row[8].replace('%', ''))),
+                        borderColor: 'rgb(0, 0, 150)',
+                        backgroundColor: 'rgb(148, 157, 253)',
+                        tension: 0.1
+                    });
+                    datasets.push({
+                        label: 'Tasa de Retención Mujeres',
+                        data: tableData.map((row) => parseFloat(row[9].replace('%', ''))),
+                        borderColor: 'rgb(255, 90, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)',
+                        tension: 0.1
+                    });
+                }
             }
 
             return {
@@ -146,9 +164,9 @@ const IndicePermanencia = () => {
                 const tabla = await getIndicesData('permanencia', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
                         
                 if (tabla.status === 200) {
-                    const headers = await getIndicesHeaders(1, cohorte, carrera);
+                    const headers = await getIndicesHeaders(1, cohorte, carrera, verSexo);
                     setHeading(headers);
-                    const datos = buildTablaIndices('permanencia', tabla.data, numSemestres);
+                    const datos = buildTablaIndices('permanencia', tabla.data, numSemestres, verSexo);
                     setData(datos);
                     setChartData(prepareChartData(datos, chartType));
                 } else {
@@ -204,6 +222,13 @@ const IndicePermanencia = () => {
 
     useEffect(() => {
         if (data.length > 0) {
+            handleTable();
+        }
+        // eslint-disable-next-line
+    }, [verSexo]);
+
+    useEffect(() => {
+        if (data.length > 0) {
             setChartData(prepareChartData(data, chartType));
         }
     }, [chartType]);
@@ -254,6 +279,7 @@ const IndicePermanencia = () => {
                         />
                     </Group>
                     <Group position="center" mt={0} mb={16} >
+                        <Checkbox labelPosition='left' checked={verSexo} onChange={(event) => setVerSexo(event.currentTarget.checked)} label='Ver por sexo' radius='sm' />
                         <Checkbox labelPosition='left' checked={modoGeneracional} onChange={(event) => setModoGeneracional(event.currentTarget.checked)} label='Modo Generacional' radius='sm' />
                         <Checkbox labelPosition='left' checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
                         <Checkbox labelPosition='left' checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />

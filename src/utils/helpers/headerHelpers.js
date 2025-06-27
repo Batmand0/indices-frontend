@@ -1,32 +1,50 @@
 import { getNombreCarrera } from "./carreraHelpers";
 
-export async function getIndicesHeaders(tipo, cohorte, carrera) {
+export async function getIndicesHeaders(tipo, cohorte, carrera, verSexo) {
     const tabla = [];
     const nombreCarrera = await getNombreCarrera(carrera);
     tabla.push(["Indices de rendimiento escolar cohorte generacional" +' '+cohorte+' '+nombreCarrera]);
     const row = ['Semestre', 'Periodo', 'Inscritos (H/M)', '', 'Egresados (H/M)', ''];
-    switch(tipo) {
-        case 1:
-            row.push('Desercion (H/M)', '', 'Tasa de retencion');
-            tabla.push(row);
-            break;
-        case 2:
-            row.push('Desercion (H/M)', '', 'Tasa de desercion escolar');
-            tabla.push(row);
-            break;
-        case 3:
-            row.push('Titulados (H/M)', '', 'Eficiencia de titulacion');
-            tabla.push(row);
-            break;
-        case 4:
-            row.push('Eficiencia terminal');
-            tabla.push(row);
-            break;
-        default:
-            row.push('Desercion (H/M)', '', 'Matricula final','Tasa de retencion');
-            tabla.push(row);
+    if (!verSexo) {
+        switch(tipo) {
+            case 1:
+                row.push('Desercion (H/M)', '', 'Tasa de retencion');
+                break;
+            case 2:
+                row.push('Desercion (H/M)', '', 'Tasa de desercion escolar');
+                break;
+            case 3:
+                row.push('Titulados (H/M)', '', 'Eficiencia de titulacion');
+                break;
+            case 4:
+                row.push('Eficiencia terminal');
+                break;
+            default:
+                row.push('Desercion (H/M)', '', 'Matricula final','Tasa de retencion');
+        }
+        tabla.push(row);
+        return tabla;
+    } else {
+        switch(tipo) {
+            case 1:
+                row.push('Desercion (H/M)', '', 'Tasa de retencion (H)', 'Tasa de retencion (M)');
+                break;
+            case 2:
+                row.push('Desercion (H/M)', '', 'Tasa de desercion (H)', 'Tasa de desercion(M)');
+                break;
+            case 3:
+                row.push('Titulados (H/M)', '', 'Eficiencia de titulacion (H)', 'Eficiencia de titulacion (M)');
+                break;
+            case 4:
+                row.push('Eficiencia terminal (H)', 'Eficiencia terminal (M)');
+                break;
+            default:
+                row.push('Desercion (H/M)', '', 'Matricula final','Tasa de retencion');
+        }
+        tabla.push(row);
+        return tabla;
     }
-    return tabla;
+    
 }
 
 export function getTablasHeaders(cohorte, numSemestres) {

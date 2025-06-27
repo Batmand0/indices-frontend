@@ -1,6 +1,7 @@
-export const buildTablaIndices = (tipo, data, numSemestres, carrera) => {
+export const buildTablaIndices = (tipo, data, numSemestres, verSexo) => {
     const tabla = [];
     const tablaIndices = Object.entries(data);
+    console.log('Tabla de índices:', tablaIndices);
     
     for(let i = 0; i < numSemestres; i++) {
             const row = [
@@ -12,40 +13,83 @@ export const buildTablaIndices = (tipo, data, numSemestres, carrera) => {
                 tablaIndices[i][1]['mujeres_egresadas']
             ];
 
-            switch(tipo) {
-                case 'permanencia':
-                    row.push(
-                        tablaIndices[i][1]['hombres_desertores'], 
-                        tablaIndices[i][1]['mujeres_desertoras'], 
-                        `${tablaIndices[i][1]['tasa_permanencia']}%`
-                    );
-                    break;
-                case 'desercion':
-                    row.push(
-                        tablaIndices[i][1]['hombres_desertores'], 
-                        tablaIndices[i][1]['mujeres_desertoras'], 
-                        `${tablaIndices[i][1]['tasa_desercion']}%`
-                    );
-                    break;
-                case 'egreso':
-                    row.push(`${tablaIndices[i][1]['tasa_egreso']}%`);
-                    break;
-                case 'titulacion':
-                    row.push(
-                        tablaIndices[i][1]['hombres_titulados'], 
-                        tablaIndices[i][1]['mujeres_tituladas'],
-                        `${tablaIndices[i][1]['tasa_titulacion']}%`
-                    );
-                    break;
-                default:
-                    row.push(
-                        tablaIndices[i][1]['hombres_desertores'], 
-                        tablaIndices[i][1]['mujeres_desertoras'], 
-                        `${tablaIndices[i][1]['tasa_permanencia']}%`
-                    );
-                    break;
+            if (!verSexo) {
+                switch(tipo) {
+                    case 'permanencia':
+                        row.push(
+                            tablaIndices[i][1]['hombres_desertores'], 
+                            tablaIndices[i][1]['mujeres_desertoras'], 
+                            `${tablaIndices[i][1]['tasa_permanencia']}%`
+                        );
+                        break;
+                    case 'desercion':
+                        row.push(
+                            tablaIndices[i][1]['hombres_desertores'], 
+                            tablaIndices[i][1]['mujeres_desertoras'], 
+                            `${tablaIndices[i][1]['tasa_desercion']}%`
+                        );
+                        break;
+                    case 'egreso':
+                        row.push(`${tablaIndices[i][1]['tasa_egreso']}%`);
+                        break;
+                    case 'titulacion':
+                        row.push(
+                            tablaIndices[i][1]['hombres_titulados'], 
+                            tablaIndices[i][1]['mujeres_tituladas'],
+                            `${tablaIndices[i][1]['tasa_titulacion']}%`
+                        );
+                        break;
+                    default:
+                        row.push(
+                            tablaIndices[i][1]['hombres_desertores'], 
+                            tablaIndices[i][1]['mujeres_desertoras'], 
+                            `${tablaIndices[i][1]['tasa_permanencia']}%`
+                        );
+                        break;
+                }
+                tabla.push(row);
+            } else {
+                switch(tipo) {
+                    case 'permanencia':
+                        row.push(
+                            tablaIndices[i][1]['hombres_desertores'], 
+                            tablaIndices[i][1]['mujeres_desertoras'], 
+                            `${tablaIndices[i][1]['tasa_permanencia_Hombres']}%`,
+                             `${tablaIndices[i][1]['tasa_permanencia_Mujeres']}%`
+                        );
+                        break;
+                    case 'desercion':
+                        row.push(
+                            tablaIndices[i][1]['hombres_desertores'], 
+                            tablaIndices[i][1]['mujeres_desertoras'], 
+                            `${tablaIndices[i][1]['tasa_desercion_Hombres']}%`,
+                            `${tablaIndices[i][1]['tasa_desercion_Mujeres']}%`
+                        );
+                        break;
+                    case 'egreso':
+                        row.push(
+                            `${tablaIndices[i][1]['tasa_egreso_Hombres']}%`,
+                            `${tablaIndices[i][1]['tasa_egreso_Mujeres']}%`
+                        );
+                        break;
+                    case 'titulacion':
+                        row.push(
+                            tablaIndices[i][1]['hombres_titulados'], 
+                            tablaIndices[i][1]['mujeres_tituladas'],
+                            `${tablaIndices[i][1]['tasa_titulacion_Hombres']}%`,
+                            `${tablaIndices[i][1]['tasa_titulacion_Mujeres']}%`
+                        );
+                        break;
+                    default:
+                        row.push(
+                            tablaIndices[i][1]['hombres_desertores'], 
+                            tablaIndices[i][1]['mujeres_desertoras'], 
+                            `${tablaIndices[i][1]['tasa_permanencia']}%`
+                        );
+                        break;
+                }
+                tabla.push(row);
             }
-            tabla.push(row);
         }
     return tabla;
 };
