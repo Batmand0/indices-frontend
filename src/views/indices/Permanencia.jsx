@@ -51,21 +51,37 @@ const IndicePermanencia = () => {
         // Extraer periodos únicos
         const periodos = new Set();
         tableData.forEach((row) => {
-            const periodo = row[1];
+            const periodo = row[0];
             periodos.add(periodo);
         });
 
         if (modoGeneracional) {
-            return {
-                labels: tableData.map((row) => row[0]), // Generaciones
-                datasets: [
-                    {
-                        label: 'Tasa de Retención',
-                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
-                        borderColor: 'rgb(255, 120, 90)',
-                        backgroundColor: 'rgb(253, 167, 148)'
-                    }
-                ]
+            const datasets = [];
+            const Generaciones = Array.from(periodos);
+            if(!verSexo) {
+                datasets.push({
+                            label: 'Tasa de Permanencia',
+                            data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                            borderColor: 'rgb(255, 120, 90)',
+                            backgroundColor: 'rgb(253, 167, 148)'
+                        });
+                } else {
+                    datasets.push({
+                        label: 'Tasa de Permanencia en Hombres',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención hombres
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                    });
+                    datasets.push({
+                        label: 'Tasa de Permanencia en Mujeres',
+                        data: tableData.map((row) => parseFloat(row[4])), // Tasa de retención mujeres
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                    });
+                }
+            return{
+                labels: Generaciones,
+                datasets: datasets
             };
         } else {
             // Para modo no generacional
@@ -151,10 +167,11 @@ const IndicePermanencia = () => {
                 if (tabla.status === 200) {
                     const headers = [
                         [`Permanencia a ${numSemestres} semestres por Generación`],
-                        ['Generación', 'Total Inicial', 'Total Final', 'Tasa de Retención']
+                        ['Generación', 'Total Inicial', 'Total Final']
                     ];
+                    verSexo ? headers[1].push('Tasa de Retención en Hombres', 'Tasa de Retención en Mujeres') : headers[1].push('Tasa de Retención');
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('permanencia', tabla.data, numSemestres);
+                    const datos = buildTablaIndicesGeneracional('permanencia', tabla.data, numSemestres, verSexo);
                     setData(datos);
                     setChartData(prepareChartData(datos, chartType));
                 } else {

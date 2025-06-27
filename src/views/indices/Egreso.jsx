@@ -68,21 +68,37 @@ const IndiceEgreso = () => {
         // Extraer periodos únicos
         const periodos = new Set();
         tableData.forEach((row) => {
-            const periodo = row[1];
+            const periodo = row[0];
             periodos.add(periodo);
         });
 
         if (modoGeneracional) {
-            return {
-                labels: tableData.map((row) => row[0]), // Generaciones
-                datasets: [
-                    {
-                        label: 'Tasa de Eficiencia de Egreso',
-                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
-                        borderColor: 'rgb(255, 120, 90)',
-                        backgroundColor: 'rgb(253, 167, 148)'
-                    }
-                ]
+            const datasets = [];
+            const Generaciones = Array.from(periodos);
+            if(!verSexo) {
+                datasets.push({
+                            label: 'Tasa de Eficiencia Terminal',
+                            data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                            borderColor: 'rgb(255, 120, 90)',
+                            backgroundColor: 'rgb(253, 167, 148)'
+                        });
+                } else {
+                    datasets.push({
+                        label: 'Tasa de Eficiencia Terminal en Hombres',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención hombres
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                    });
+                    datasets.push({
+                        label: 'Tasa de Eficiencia Terminal en Mujeres',
+                        data: tableData.map((row) => parseFloat(row[4])), // Tasa de retención mujeres
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                    });
+                }
+            return{
+                labels: Generaciones,
+                datasets: datasets
             };
         } else {
             // Para modo no generacional
@@ -171,10 +187,11 @@ const IndiceEgreso = () => {
                     // Headers para vista generacional
                     const headers = [
                         [`Egresos a ${numSemestres} semestres por Generación`],
-                        ['Generación', 'Total Inicial', 'Total Actual', 'Tasa de Egreso']
+                        ['Generación', 'Total Inicial', 'Total Actual']
                     ];
+                    verSexo ? headers[1].push('Tasa de Eficiencia Terminal en Hombres', 'Tasa de Eficiencia Terminal en Mujeres') : headers[1].push('Tasa de Eficiencia Terminal');
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('egreso', tabla.data, numSemestres);
+                    const datos = buildTablaIndicesGeneracional('egreso', tabla.data, numSemestres, verSexo);
                     setData(datos);
                     setChartData(prepareChartData(datos, chartType));
                 } else {
