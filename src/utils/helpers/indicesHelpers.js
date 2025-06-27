@@ -101,9 +101,10 @@ export const buildTablaIndices = (tipo, data, numSemestres, verSexo) => {
  * @param {number} numSemestres - Número de semestres seleccionado
  * @returns {Array} Tabla formateada para el componente
  */
-export const buildTablaIndicesGeneracional = (tipo, data, numSemestres) => {
+export const buildTablaIndicesGeneracional = (tipo, data, numSemestres, verSexo) => {
     const tabla = [];
     const generaciones = Object.entries(data);
+    console.log('Tabla de índices generacionales:', generaciones);
     
     for(const [generacion, datos] of generaciones) {
         // Calcular el periodo final
@@ -133,26 +134,59 @@ export const buildTablaIndicesGeneracional = (tipo, data, numSemestres) => {
             datos['total_inicial'],
             datos['total_actual']
         ];
+        
 
-        switch(tipo){
-            case 'desercion':
-                row.push(`${datos['tasa_desercion']}%`);
-                break;
-            case 'permanencia':
-                row.push(`${datos['tasa_permanencia']}%`);
-                break;
-            case 'egreso':
-                row.push(`${datos['tasa_egreso']}%`);
-                break;
-            case 'titulacion':
-                row.push(`${datos['tasa_titulacion']}%`);
-                break;
-            default:
-                row.push(`${datos['tasa_desercion']}%`);
-                break;
+        if (!verSexo) {
+            switch(tipo){
+                case 'desercion':
+                    row.push(`${datos['tasa_desercion']}%`);
+                    break;
+                case 'permanencia':
+                    row.push(`${datos['tasa_permanencia']}%`);
+                    break;
+                case 'egreso':
+                    row.push(`${datos['tasa_egreso']}%`);
+                    break;
+                case 'titulacion':
+                    row.push(`${datos['tasa_titulacion']}%`);
+                    break;
+                default:
+                    row.push(`${datos['tasa_desercion']}%`);
+                    break;
+            }
+            tabla.push(row);
+        } else {
+            switch(tipo){
+                case 'desercion':
+                    row.push(
+                        `${datos['tasa_desercion_hombres']}%`, 
+                        `${datos['tasa_desercion_mujeres']}%`
+                    );
+                    break;
+                case 'permanencia':
+                    row.push(
+                        `${datos['tasa_permanencia_hombres']}%`, 
+                        `${datos['tasa_permanencia_mujeres']}%`
+                    );
+                    break;
+                case 'egreso':
+                    row.push(
+                        `${datos['tasa_egreso_hombres']}%`, 
+                        `${datos['tasa_egreso_mujeres']}%`
+                    );
+                    break;
+                case 'titulacion':
+                    row.push(
+                        `${datos['tasa_titulacion_hombres']}%`, 
+                        `${datos['tasa_titulacion_mujeres']}%`
+                    );
+                    break;
+                default:
+                    row.push(`${datos['tasa_desercion']}%`);
+                    break;
+            }
+            tabla.push(row);
         }
-        tabla.push(row);
     }
-
     return tabla.sort((a, b) => b[0].localeCompare(a[0]));
 };

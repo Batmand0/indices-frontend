@@ -77,21 +77,37 @@ const IndiceDesercion = () => {
         // Extraer periodos únicos
         const periodos = new Set();
         tableData.forEach((row) => {
-            const periodo = row[1];
+            const periodo = row[0];
             periodos.add(periodo);
         });
 
         if (modoGeneracional) {
-            return {
-                labels: tableData.map((row) => row[0]), // Generaciones
-                datasets: [
-                    {
-                        label: 'Tasa de Deserción',
-                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
-                        borderColor: 'rgb(255, 120, 90)',
-                        backgroundColor: 'rgb(253, 167, 148)'
-                    }
-                ]
+            const datasets = [];
+            const Generaciones = Array.from(periodos);
+            if(!verSexo) {
+                datasets.push({
+                            label: 'Tasa de Deserción',
+                            data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención
+                            borderColor: 'rgb(255, 120, 90)',
+                            backgroundColor: 'rgb(253, 167, 148)'
+                        });
+                } else {
+                    datasets.push({
+                        label: 'Tasa de Deserción Hombres',
+                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención hombres
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                    });
+                    datasets.push({
+                        label: 'Tasa de Deserción Mujeres',
+                        data: tableData.map((row) => parseFloat(row[4])), // Tasa de retención mujeres
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                    });
+                }
+            return{
+                labels: Generaciones,
+                datasets: datasets
             };
         } else {
             // Para modo no generacional
@@ -182,10 +198,11 @@ const IndiceDesercion = () => {
                     // Headers para vista generacional
                     const headers = [
                         [`Deserción a ${numSemestres} semestres por Generación`],
-                        ['Generación', 'Total Inicial', 'Total Actual', 'Tasa Deserción']
+                        ['Generación', 'Total Inicial', 'Total Actual']
                     ];
+                    verSexo ? headers[1].push('Tasa de deserción en Hombres', 'Tasa de deserción en Mujeres') : headers[1].push('Tasa de deserción');
                     setHeading(headers);
-                    const datos = buildTablaIndicesGeneracional('desercion', tabla.data, numSemestres);
+                    const datos = buildTablaIndicesGeneracional('desercion', tabla.data, numSemestres, verSexo);
                     setData(datos);
                     setChartData(prepareChartData(datos));
                 } else {
