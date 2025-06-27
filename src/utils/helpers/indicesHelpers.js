@@ -68,16 +68,16 @@ export const buildTablaIndices = (tipo, data, numSemestres, verSexo) => {
                         break;
                     case 'egreso':
                         row.push(
-                            `${tablaIndices[i][1]['tasa_egreso_Hombres']}%`,
-                            `${tablaIndices[i][1]['tasa_egreso_Mujeres']}%`
+                            `${tablaIndices[i][1]['tasa_egreso_hombres']}%`,
+                            `${tablaIndices[i][1]['tasa_egreso_mujeres']}%`
                         );
                         break;
                     case 'titulacion':
                         row.push(
                             tablaIndices[i][1]['hombres_titulados'], 
                             tablaIndices[i][1]['mujeres_tituladas'],
-                            `${tablaIndices[i][1]['tasa_titulacion_Hombres']}%`,
-                            `${tablaIndices[i][1]['tasa_titulacion_Mujeres']}%`
+                            `${tablaIndices[i][1]['tasa_titulacion_hombres']}%`,
+                            `${tablaIndices[i][1]['tasa_titulacion_mujeres']}%`
                         );
                         break;
                     default:

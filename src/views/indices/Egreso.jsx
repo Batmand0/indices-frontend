@@ -40,6 +40,8 @@ const IndiceEgreso = () => {
     const [chartData, setChartData] = useState(null);
     const [chartType, setChartType] = useState('line');
 
+    const [verSexo, setVerSexo] = useState(false);
+
     const fetchCarreras = async() => {
         const c = await dropDownData.getListaCarreras();
         c.push({'value': 'TODAS', 'label': 'TODAS LAS CARRERAS'});
@@ -57,6 +59,10 @@ const IndiceEgreso = () => {
         fetchCarreras();
     }, [modoGeneracional]);
 
+    useEffect(() => {
+        handleTable();
+        // eslint-disable-next-line
+    }, [verSexo]);
     
     const prepareChartData = (tableData, chartType) => {
         // Extraer periodos únicos
@@ -113,14 +119,31 @@ const IndiceEgreso = () => {
                     borderWidth: 1
                 });
             } else {
-                // Para gráfica de línea
-                datasets.push({
-                    label: 'Tasa de Eficiencia de Egreso',
-                    data: tableData.map((row) => parseFloat(row[6].replace('%', ''))),
-                    borderColor: 'rgb(255, 120, 90)',
-                    backgroundColor: 'rgb(253, 167, 148)',
-                    tension: 0.1
-                });
+                if(!verSexo) {
+                    // Para gráfica de línea
+                    datasets.push({
+                        label: 'Tasa de Eficiencia de Egreso',
+                        data: tableData.map((row) => parseFloat(row[6].replace('%', ''))),
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)',
+                        tension: 0.1
+                    });
+                } else {
+                    datasets.push({
+                        label: 'Tasa de Eficiencia de Egreso en Hombres',
+                        data: tableData.map((row) => parseFloat(row[6].replace('%', ''))),
+                        borderColor: 'rgb(90, 96, 255)',
+                        backgroundColor: 'rgb(54, 5, 248)',
+                        tension: 0.1
+                    });
+                    datasets.push({
+                        label: 'Tasa de Eficiencia de Egreso en Mujeres',
+                        data: tableData.map((row) => parseFloat(row[7].replace('%', ''))),
+                        borderColor: 'rgb(255, 120, 90)',
+                        backgroundColor: 'rgb(253, 167, 148)',
+                        tension: 0.1
+                    });
+                }
             }
 
             return {
@@ -162,9 +185,9 @@ const IndiceEgreso = () => {
                 const tabla = await getIndicesData('egreso', examenYConv, trasladoYEquiv, cohorte, carrera, numSemestres);
                         
                 if (tabla.status === 200) {
-                    const headers = await getIndicesHeaders(4, cohorte, carrera);
+                    const headers = await getIndicesHeaders(4, cohorte, carrera, verSexo);
                     setHeading(headers);
-                    const datos = buildTablaIndices('egreso', tabla.data, numSemestres, carrera);
+                    const datos = buildTablaIndices('egreso', tabla.data, numSemestres, verSexo);
                     setData(datos);
                     setChartData(prepareChartData(datos, chartType));
                 } else {
@@ -247,6 +270,7 @@ const IndiceEgreso = () => {
                         ]} />
                     </Group>
                     <Group position="center" mt={0} mb={16} >
+                        <Checkbox labelPosition='left' checked={verSexo} onChange={(event) => setVerSexo(event.currentTarget.checked)} label='Ver por sexo' radius='sm' />
                         <Checkbox labelPosition='left' color='naranja'  checked={modoGeneracional} onChange={(event) => setModoGeneracional(event.currentTarget.checked)} label='Modo Generacional' radius='sm' />
                         <Checkbox labelPosition='left' color='naranja'  checked={examenYConv} onChange={(event) => setExamenYConv(event.currentTarget.checked)} label='Examen y Convalidación' radius='sm' />
                         <Checkbox labelPosition='left' color='naranja'  checked={trasladoYEquiv} onChange={(event) => setTrasladoYEquiv(event.currentTarget.checked)} label='Traslado y Equivalencia' radius='sm' />
