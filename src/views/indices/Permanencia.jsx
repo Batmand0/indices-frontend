@@ -89,13 +89,14 @@ const IndicePermanencia = () => {
             const periodosList = Array.from(periodos);
             
             // Crear un dataset por cada tipo de dato (Hombres, Mujeres, Total)
-            const datosHombres = tableData.map((row) => parseFloat(row[2]));
-            const datosMujeres = tableData.map((row) => parseFloat(row[3]));
-            const datosTotal = datosHombres.map((h, idx) => h + datosMujeres[idx]);
+            const datosHombres = sumaHombres(tableData);
+            const datosMujeres = sumaMujeres(tableData);
+            const datosTotal = datosHombres.map((valor, idx) => valor + datosMujeres[idx]);
+            console.log(`datos Hombres: ${datosHombres}, datos Mujeres: ${datosMujeres}, datos Total: ${datosTotal}`);
 
             if (chartType === 'bar') {
                 datasets.push({
-                    label: 'Hombres inscritos',
+                    label: 'Hombres',
                     data: datosHombres,
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
                     borderColor: 'rgb(54, 162, 235)',
@@ -103,7 +104,7 @@ const IndicePermanencia = () => {
                 });
 
                 datasets.push({
-                    label: 'Mujeres inscritas',
+                    label: 'Mujeres',
                     data: datosMujeres,
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgb(255, 99, 132)',
@@ -111,7 +112,7 @@ const IndicePermanencia = () => {
                 });
 
                 datasets.push({
-                    label: 'Total de inscritos',
+                    label: 'Total',
                     data: datosTotal,
                     backgroundColor: 'rgba(255, 120, 90, 0.5)',
                     borderColor: 'rgb(255, 120, 90)',
@@ -202,6 +203,24 @@ const IndicePermanencia = () => {
         } finally {
             setIsLoading(false);
         }
+    };
+    
+    // Suma de inscritos hombres + egresados hombres del periodo anterior
+    const sumaHombres = (tableData) =>{
+        return tableData.map((row, idx) => {
+            const inscritos = parseFloat(row[2]);
+            const egresadosPrevios = idx > 0 ? parseFloat(tableData[idx - 1][4]) : 0;
+            return inscritos + egresadosPrevios;
+        });
+    };
+
+    // Suma de inscritos mujeres + egresadas mujeres del periodo anterior
+    const sumaMujeres = (tableData) =>{
+        return tableData.map((row, idx) => {
+            const inscritos = parseFloat(row[3]);
+            const egresadosPrevios = idx > 0 ? parseFloat(tableData[idx - 1][5]) : 0;
+            return inscritos + egresadosPrevios;
+        });
     };
 
     const handlePrint = async() => {
@@ -333,3 +352,4 @@ const IndicePermanencia = () => {
 };
 
 export default IndicePermanencia;
+
