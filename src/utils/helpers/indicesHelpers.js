@@ -129,11 +129,22 @@ export const buildTablaIndicesGeneracional = (tipo, data, numSemestres, verSexo)
         const añoFinal = parseInt(año) + añosAdicionales;
         const periodoCompleto = `${periodoInicial} a ${añoFinal}-${semestreFinal}`;
 
-        const row = [
-            periodoCompleto,  // Ahora usamos el periodo completo
-            datos['total_inicial'],
-            datos['total_actual']
-        ];
+        let row = [];
+        if(!verSexo){
+            row = [
+                periodoCompleto,  // Ahora usamos el periodo completo
+                datos['total_inicial'],
+                datos['total_actual']
+            ];
+        } else{
+            row = [
+                periodoCompleto,  // Ahora usamos el periodo completo
+                datos['total_inicial_hombres'],
+                datos['total_inicial_mujeres'],
+                datos['total_actual_hombres'],
+                datos['total_actual_mujeres']
+            ];
+        }
         
 
         if (!verSexo) {

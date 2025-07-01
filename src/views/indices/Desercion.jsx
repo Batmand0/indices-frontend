@@ -94,13 +94,13 @@ const IndiceDesercion = () => {
                 } else {
                     datasets.push({
                         label: 'Tasa de Deserción Hombres',
-                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención hombres
+                        data: tableData.map((row) => parseFloat(row[row.length - 2])), // Tasa de retención hombres
                         borderColor: 'rgb(54, 162, 235)',
                         backgroundColor: 'rgba(54, 162, 235, 0.5)'
                     });
                     datasets.push({
                         label: 'Tasa de Deserción Mujeres',
-                        data: tableData.map((row) => parseFloat(row[4])), // Tasa de retención mujeres
+                        data: tableData.map((row) => parseFloat(row[row.length - 1])), // Tasa de retención mujeres
                         borderColor: 'rgb(255, 99, 132)',
                         backgroundColor: 'rgba(255, 99, 132, 0.5)'
                     });
@@ -198,9 +198,9 @@ const IndiceDesercion = () => {
                     // Headers para vista generacional
                     const headers = [
                         [`Deserción a ${numSemestres} semestres por Generación`],
-                        ['Generación', 'Total Inicial', 'Total Actual']
+                        ['Generación']
                     ];
-                    verSexo ? headers[1].push('Tasa de deserción en Hombres', 'Tasa de deserción en Mujeres') : headers[1].push('Tasa de deserción');
+                    verSexo ? headers[1].push('Total Inicial (H)', 'Total Inicial (M)', 'Total Final (H)', 'Total Final (M)', 'Tasa de Deserción (H)', 'Tasa de Deserción (M)') : headers[1].push('Total Inicial', 'Total Final', 'Tasa de Deserción');
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('desercion', tabla.data, numSemestres, verSexo);
                     setData(datos);

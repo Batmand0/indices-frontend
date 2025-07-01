@@ -85,13 +85,13 @@ const IndiceEgreso = () => {
                 } else {
                     datasets.push({
                         label: 'Tasa de Eficiencia Terminal en Hombres',
-                        data: tableData.map((row) => parseFloat(row[3])), // Tasa de retención hombres
+                        data: tableData.map((row) => parseFloat(row[row.length - 2])), // Tasa de retención hombres
                         borderColor: 'rgb(54, 162, 235)',
                         backgroundColor: 'rgba(54, 162, 235, 0.5)'
                     });
                     datasets.push({
                         label: 'Tasa de Eficiencia Terminal en Mujeres',
-                        data: tableData.map((row) => parseFloat(row[4])), // Tasa de retención mujeres
+                        data: tableData.map((row) => parseFloat(row[row.length - 1])), // Tasa de retención mujeres
                         borderColor: 'rgb(255, 99, 132)',
                         backgroundColor: 'rgba(255, 99, 132, 0.5)'
                     });
@@ -186,10 +186,10 @@ const IndiceEgreso = () => {
                 if (tabla.status === 200) {
                     // Headers para vista generacional
                     const headers = [
-                        [`Egresos a ${numSemestres} semestres por Generación`],
-                        ['Generación', 'Total Inicial', 'Total Actual']
+                        [`Eficiencia Terminal a ${numSemestres} semestres por Generación`],
+                        ['Generación']
                     ];
-                    verSexo ? headers[1].push('Tasa de Eficiencia Terminal en Hombres', 'Tasa de Eficiencia Terminal en Mujeres') : headers[1].push('Tasa de Eficiencia Terminal');
+                    verSexo ? headers[1].push('Total Inicial (H)', 'Total Inicial (M)', 'Total Final (H)', 'Total Final (M)', 'Tasa de Egreso (H)', 'Tasa de Egreso (M)') : headers[1].push('Total Inicial', 'Total Final', 'Tasa de Egreso');
                     setHeading(headers);
                     const datos = buildTablaIndicesGeneracional('egreso', tabla.data, numSemestres, verSexo);
                     setData(datos);
