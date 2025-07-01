@@ -17,6 +17,7 @@ export const buildTablaReportesEgreso = (data) => {
     const datos= Object.entries(data);
     const tabla = [];
     datos.forEach((registros) => {
+        console.log(registros);
         // Se agrega el nombre de la carrera
         const row = [registros[0], registros[1]['poblacion_nuevo_ingreso']['hombres'], registros[1]['poblacion_nuevo_ingreso']['mujeres']];
         const regs = Object.entries(registros[1]['registros']);
@@ -26,9 +27,9 @@ export const buildTablaReportesEgreso = (data) => {
             else
                 row.push(reg[1]['hombres'], reg[1]['mujeres']);
         });
-        if (row.length > 13) {
+        if (row.length > 15) {
             const inicioRegs = row.slice(0, 11);
-            inicioRegs.push(row[13], row[14], row[11], row[12], row[15]);
+            inicioRegs.push(row[13], row[14], row[15], row[16], row[11], row[12],row[17], row[18], row[19]);
             tabla.push(inicioRegs);
         } else {
             tabla.push(row);

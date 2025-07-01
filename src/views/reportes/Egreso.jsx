@@ -113,9 +113,17 @@ const ReportesEgreso = () => {
     
         // La eficiencia está en la última columna de cada fila
         const datasets = [];
-        const eficiencias = tableData.map((row) => ({
+        const eficiencias_mujeres = tableData.map((row) => ({
             carrera: row[0],
             eficiencia: parseFloat(row[row.length - 1]) || 0
+        }));
+        const eficiencias_hombres = tableData.map((row) => ({
+            carrera: row[0],
+            eficiencia: parseFloat(row[row.length - 2]) || 0
+        }));
+        const eficiencias = tableData.map((row) => ({
+            carrera: row[0],
+            eficiencia: parseFloat(row[row.length - 3]) || 0
         }));
         const eficiencias2 = tableData.map((row) => ({
             carrera: row[0],
@@ -140,6 +148,20 @@ const ReportesEgreso = () => {
             });
         } else{
             // La eficiencia de egreso es la ultima columna de la tabla
+            datasets.push({
+                label: 'Eficiencia de Egreso (H)',
+                data: eficiencias_hombres.map((e) => e.eficiencia),
+                backgroundColor: 'rgba(137, 90, 255, 0.5)', // Color toronja
+                borderColor: 'rgb(90, 118, 255)',
+                borderWidth: 2
+            });
+            datasets.push({
+                label: 'Eficiencia de Egreso (M)',
+                data: eficiencias_mujeres.map((e) => e.eficiencia),
+                backgroundColor: 'rgba(255, 90, 195, 0.5)', // Color toronja
+                borderColor: 'rgb(244, 90, 255)',
+                borderWidth: 2
+            });
             datasets.push({
                 label: 'Eficiencia de Egreso',
                 data: eficiencias.map((e) => e.eficiencia),

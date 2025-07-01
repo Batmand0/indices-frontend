@@ -81,7 +81,7 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
     // tipo === 1 ? 'titulación' : 'egreso' -> si tipo es 1 muestra 'titulación', si no muestra 'egreso'
     const firstRow = [
         'Carrera',              // Columna para nombre de carrera
-        'Nuevo Ingreso', '',    // Columnas para nuevo ingreso (H/M)
+        'Nuevo Ingreso (H/M)', '',    // Columnas para nuevo ingreso (H/M)
         `Año de ${tipo === 1 ? 'titulación' : 'egreso'}`, '' // Columnas para año (H/M)
     ];
 
@@ -121,15 +121,19 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
     // Agregamos las columnas finales para eficiencia
     firstRow.push('');
     firstRow.push(`Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`);
+    firstRow.push(`Eficiencia de ${tipo === 1 ? 'titulación (H)' : 'egreso (H)'}`);
+    firstRow.push(`Eficiencia de ${tipo === 1 ? 'titulación (M)' : 'egreso (M)'}`);
     if(tipo === 1) firstRow.push('Indice de titulación');
-    secondRow.push("Total",' ', ' '); 
-    thirdRow.push(' ', ' ', ' ');
+    secondRow.push("Total",' ', ' ',' ',' '); 
+    thirdRow.push(' ', ' ', ' ',' ',' ');
 
     // Si son más de 12 semestres, agregamos columnas adicionales
     if (numSemestres > 12) {
         firstRow.push(
             `Año  de ${tipo === 1 ? 'titulación' : 'egreso'}`, '', // Columnas para año adicional
-            `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`
+            `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`,
+            `Eficiencia de ${tipo === 1 ? 'titulación (H)' : 'egreso (H)'}`,
+            `Eficiencia de ${tipo === 1 ? 'titulación (M)' : 'egreso (M)'}`
         );
         // Agregar espacios para mantener alineación
         secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)", '');
