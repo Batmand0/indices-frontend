@@ -52,9 +52,9 @@ export const buildTablaReportesTitulacion = (data) => {
             else
                 row.push(reg[1]['hombres'], reg[1]['mujeres']);
         });
-        if (row.length > 14) {
-            const inicioRegs = row.slice(0, 11);
-            inicioRegs.push(row[13], row[14], row[15], row[11], row[12], row[16], row[17]);
+        if (row.length > 16) {
+            const inicioRegs = row.slice(0,3);
+            inicioRegs.push(row[11], row[12], row[22], row[18], row[20], row[21], row[19]);
             tabla.push(inicioRegs);
         } else {
             tabla.push(row);

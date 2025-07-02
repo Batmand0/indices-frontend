@@ -103,19 +103,29 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
         periodo = anioPeriodo(periodo);
     }
 
-    // Agregamos columnas para los semestres del 9 al 12 (o hasta numSemestres si es menor)
-    for (let i = 9; i <= (numSemestres >= 12 ? 12 : numSemestres); i++) {
-        if (i > 9) {
-            // Agregamos espacios vacíos para mantener alineación H/M
-            firstRow.push('', '');
+    // Si son más de 12 semestres, solo agregamos el header del semestre 13 (o el último)
+    if (numSemestres > 12) {
+        // Avanzamos hasta el semestre 13
+        for (let i = 9; i < numSemestres; i++) {
+            periodo = anioPeriodo(periodo);
         }
-        // Agregamos el periodo con formato "YYYY-P (H/M)"
-        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)");
-        secondRow.push(''); // Espacio para M
-        periodo = anioPeriodo(periodo);
-        // Agregamos el número de semestre
-        thirdRow.push(i);
-        thirdRow.push(''); // Espacio para mantener alineación
+        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)", '');
+        thirdRow.push(numSemestres, '');
+    } else {
+        // Agregamos columnas para los semestres del 9 al 12 (o hasta numSemestres si es menor)
+        for (let i = 9; i <= (numSemestres >= 12 ? 12 : numSemestres); i++) {
+            if (i > 9) {
+                // Agregamos espacios vacíos para mantener alineación H/M
+                firstRow.push('','');
+            }
+            // Agregamos el periodo con formato "YYYY-P (H/M)"
+            secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)");
+            secondRow.push(''); // Espacio para M
+            periodo = anioPeriodo(periodo);
+            // Agregamos el número de semestre
+            thirdRow.push(i);
+            thirdRow.push(''); // Espacio para mantener alineación
+        }
     }
 
     // Agregamos las columnas finales para eficiencia
@@ -126,26 +136,6 @@ export function getReportesHeaders(tipo, cohorte, numSemestres){
     if(tipo === 1) firstRow.push('Indice de titulación');
     secondRow.push("Total",' ', ' ',' ',' '); 
     thirdRow.push(' ', ' ', ' ',' ',' ');
-
-    // Si son más de 12 semestres, agregamos columnas adicionales
-    if (numSemestres > 12) {
-        firstRow.push(
-            `Año  de ${tipo === 1 ? 'titulación' : 'egreso'}`, '', // Columnas para año adicional
-            `Eficiencia de ${tipo === 1 ? 'titulación' : 'egreso'}`,
-            `Eficiencia de ${tipo === 1 ? 'titulación (H)' : 'egreso (H)'}`,
-            `Eficiencia de ${tipo === 1 ? 'titulación (M)' : 'egreso (M)'}`
-        );
-        // Agregar espacios para mantener alineación
-        secondRow.push(periodo[0]+"-"+periodo[1]+" (H/M)", '');
-        thirdRow.push(numSemestres, '');
-
-        if (tipo === 1) {
-            // Agregar espacios para mantener alineación
-            secondRow.push('.', '');
-            thirdRow.push('', '');
-            firstRow.push('Indice de Titulación');
-        }
-    }
 
     // Agregamos las tres filas a la tabla en orden
     tabla.push(firstRow);  // Primera fila: títulos
